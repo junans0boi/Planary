@@ -1,0 +1,74 @@
+/* src/components/DirectMessage/DirectMessagePage.css */
+
+/* 네비게이션 바 스타일 */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  background-color: #fff;
+  color: #000;
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+/* 네비게이션 바 좌측 영역 (뒤로가기 아이콘) */
+.nav-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* 네비게이션 바 중앙 영역 (타이틀) */
+.title {
+  flex: 2;
+  text-align: center;
+}
+
+.title h3 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+/* 네비게이션 바 우측 영역 (댓글 아이콘) */
+.nav-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* 아이콘에 마우스 커서 스타일 */
+.nav-bar svg {
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+/* 콘텐츠 영역 스타일 */
+.content {
+  padding: 20px;
+}
+
+/* 검색 영역 타이틀 */
+.content p {
+  margin-bottom: 10px;
+  line-height: 5px;
+  font-size: 0.8em;
+  color:#000;
+}
+/* 검색 버튼 스타일 */
+.search-button {
+  padding: 10px 20px;
+  width: 100px;
+  font-size: 1em;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #443a3a;
+}

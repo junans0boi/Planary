@@ -1,0 +1,61 @@
+/* 전체 내비게이션 바 스타일 */
+.nav-bar {
+    position: fixed;
+    /* 상단에 고정 */
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: white;
+    /* 배경색 */
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    z-index: 1000;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    /* 약간의 그림자 효과 */
+}
+
+/* 왼쪽 섹션 */
+.nav-left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    margin-left: 0; /* 왼쪽 여백 제거 */
+}
+
+/* 오른쪽 섹션 */
+.nav-right {
+    display: flex; /* block → flex로 변경 */
+    align-items: center;
+    justify-content: flex-end; /* 오른쪽 정렬 */
+    margin-right: 10; /* 오른쪽 여백 제거 */
+}
+
+/* 프로필 이미지 스타일 */
+.profile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* 아이콘 스타일 */
+.nav-icon {
+    font-size: 20px;
+    color: #333;
+    margin-left: 15px;
+    cursor: pointer;
+}
+/* 
+@media (max-width: 768px) {
+    .nav-bar {
+        padding: 0 10px;
+    }
+
+    .nav-right .nav-icon {
+        margin-left: 10px;
+    }
+} */
