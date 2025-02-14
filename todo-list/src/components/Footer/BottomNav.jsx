@@ -15,25 +15,21 @@ const BottomNav = () => {
             <div>
                 <Link to="/" className="nav-link" onClick={() => setActiveNav(1)}>
                     <FontAwesomeIcon icon="home" className={activeNav === 1 ? "nav-item active" : "nav-item"} />
-                    <span className={activeNav === 1 ? "nav-text active" : "nav-text"}>Calendar</span>
                 </Link>
             </div>
             <div>
                 <Link to="/todolist" className="nav-link" onClick={() => setActiveNav(2)}>
-                    <FontAwesomeIcon icon="list" className={activeNav === 3 ? "nav-item active" : "nav-item"} />
-                    <span className={activeNav === 2 ? "nav-text active" : "nav-text"}>TodoList</span>
+                    <FontAwesomeIcon icon="list" className={activeNav === 2 ? "nav-item active" : "nav-item"} />
                 </Link>
             </div>
             <div>
                 <Link to="/diary" className="nav-link" onClick={() => setActiveNav(3)}>
-                    <FontAwesomeIcon icon="book" className={activeNav === 4 ? "nav-item active" : "nav-item"} />
-                    <span className={activeNav === 3 ? "nav-text active" : "nav-text"}>Diary</span>
+                    <FontAwesomeIcon icon="book" className={activeNav === 3 ? "nav-item active" : "nav-item"} />
                 </Link>
             </div>
             <div>
                 <Link to="/profile" className="nav-link" onClick={() => setActiveNav(4)}>
-                    <FontAwesomeIcon icon="user" className={activeNav === 5 ? "nav-item active" : "nav-item"} />
-                    <span className={activeNav === 4 ? "nav-text active" : "nav-text"}>Profile</span>
+                    <FontAwesomeIcon icon="user" className={activeNav === 4 ? "nav-item active" : "nav-item"} />
                 </Link>
             </div>
         </nav>

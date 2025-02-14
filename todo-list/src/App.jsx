@@ -11,7 +11,7 @@ import "./App.css";
 function App() {
   return (
     <div className="app-container">
-      <TopBar title="Planiary" />
+      <TopBar />
       <Routes>
         <Route path="/" element={<CalendarPage />} />
         <Route path="/todolist" element={<TodoListPage />} />

@@ -43,7 +43,6 @@ const NavBar = () => {
             style={{ cursor: "pointer" }}
           />
           <FontAwesomeIcon icon={faPaperPlane} className="nav-icon" />
-          <FontAwesomeIcon icon={faEllipsisH} className="nav-icon" />
         </div>
       </nav>
       {/* 모달 표시 조건부 렌더링 */}
