@@ -16,9 +16,10 @@
     background: #fff;
     padding: 20px 30px;
     border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
-    max-height: 90vh;
+    width: 1200px;
+    max-width: 800px;
+    height: 100%;
+    max-height: 100vh;
     overflow-y: auto;
   }
   
@@ -71,3 +72,39 @@
     background-color: #ccc;
     color: #000;
   }
+  /* === Swiper 공통 === */
+
+/* Swiper 컨테이너 (년/월/일/시/분 각각) */
+.swiper {
+  width: 60px;       /* 실제 사용 중인 width와 동일하게 */
+  height: 120px;     /* 실제 사용 중인 height와 동일하게 */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;  /* 내부 내용이 넘치지 않도록 */
+  background-color: #fff;
+}
+
+/* Swiper 슬라이드 */
+.swiper-slide {
+  /* 세로 방향 정렬 시 가운데 정렬 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1rem;
+  color: #333;
+  transition: transform 0.2s;
+}
+
+/* 활성 슬라이드: 중앙에 오는 슬라이드에 대한 강조 효과 */
+.swiper-slide.swiper-slide-active {
+  font-weight: bold;
+  color: #007bff;
+  transform: scale(1.05);
+}
+
+/* 이전/다음 슬라이드에 대한 효과 (선택 사항) 
+   조금 더 어둡게/밝게, 혹은 반투명 등 원하는 스타일 적용 가능 */
+.swiper-slide-prev, .swiper-slide-next {
+  opacity: 0.6;
+}
