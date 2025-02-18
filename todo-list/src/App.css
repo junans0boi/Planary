@@ -1,6 +1,20 @@
-#root {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* todo-list/src/App.css */
+
+/* 전체 화면을 차지하고, 상단/하단 바 높이를 제외한 영역을 메인으로 사용 */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* 뷰포트 전체 높이 사용 */
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* 내부 스크롤은 main-content가 담당 */
+}
+
+/* 메인 영역: 상단바 60px, 하단바 60px 공간 제외 후 스크롤 가능하도록 */
+.main-content {
+  flex: 1;
+  margin-top: 60px;   /* TopBar 높이 */
+  margin-bottom: 60px;/* BottomNav 높이 */
+  overflow-y: auto;   /* 세로 스크롤 */
+  background-color: #fff;
 }

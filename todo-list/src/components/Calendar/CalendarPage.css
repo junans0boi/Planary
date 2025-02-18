@@ -12,15 +12,22 @@ body {
 }
 
 /* 달력 감싸는 컨테이너 */
-/* 기본 스타일 (모바일 우선) */
 .calendar-container {
-  max-width: 1000px;
-  width: 90%;
-  margin: 40px auto 0;
-  padding: 20px;
+  /* 화면 가득 차도록 */
+  width: 100%;
+  margin: 0 auto;
+  padding: 0; 
   background-color: #fff;
+  min-height: 100vh; /* 세로로도 충분히 차도록 */
+  box-sizing: border-box;
   text-align: center;
-  min-height: 100vh;
+}
+
+/* React Calendar */
+.react-calendar {
+  width: 100%;
+  border: none;
+  /* 필요시 높이, min-height 등 추가 가능 */
 }
 
 /* 상단바: 년도/월 선택 영역 */
@@ -58,15 +65,20 @@ body {
    React Calendar 기본
 -------------------- */
 
-.react-calendar {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  background: #fff;
-  border: none;
-  font-family: 'Apple SD Gothic Neo', sans-serif;
-  line-height: 1.125em;
+/* 일정 라벨(예시) */
+.schedule-label {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  border-radius: 12px;
+  background-color: #ffe3ea; /* 파스텔 핑크 예시 */
+  color: #d9534f;           /* 핑크/레드 계열 텍스트 */
+  white-space: nowrap;      /* 한 줄 표시 */
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
+
 
 /* 내비게이션 영역 숨김 (내부 화살표 제거) */
 .react-calendar__navigation {
@@ -85,7 +97,8 @@ body {
 
 .react-calendar__month-view__weekdays__weekday abbr {
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 1.5rem;
+  color: #000;
 }
 
 /* 날짜 타일 */
@@ -182,79 +195,8 @@ body {
 }
 
 
-/* 기존 CSS 코드*/
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-/* 모달 컨텐츠 */
-.modal-content {
-  background: #fff;
-  padding: 100px 30px;
-  border-radius: 4px;
-  width: 100%;
-  max-width: 400px;
-}
-
-/* 모달 섹션: 년도/월 선택 영역 */
-.modal-section {
-  margin-bottom: 20px;
-}
-
-/* 버튼 그룹 */
-.button-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-/* 버튼 스타일 */
-.button-group button {
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  background: #f9f9f9;
-  color: #000;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.button-group button:hover {
-  background: #eaeaea;
-}
-
-/* 선택된 버튼 */
-.button-group button.selected {
-  background: #007bff;
-  color: #fff;
-  border-color: #007bff;
-}
-
-/* 모달 버튼 영역 */
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.modal-buttons button {
-  padding: 5px 10px;
-  font-size: 1rem;
-  cursor: pointer;
-}
 
 /* PC 버전: 화면 너비가 769px 이상인 경우 */
-
-
 /* PC 버전: 폭을 최대한 넓게 사용 */
 @media (min-width: 769px) {
   .calendar-container {
@@ -270,9 +212,10 @@ body {
 
 /* 캘린더 상단 헤더 */
 .calendar-header h2 {
-  font-size: 2rem;
+  font-size: 3rem;
   margin: 0;
   color: #4f4f4f;
+  padding: 10px;
 }
 
 /* React Calendar 기본 스타일 (기존 코드 유지) */
@@ -281,6 +224,7 @@ body {
   border: none;
   line-height: 1.125em;
   margin: 0 auto;
+  
 }
 
 .react-calendar__tile {
@@ -295,7 +239,7 @@ body {
   position: absolute;
   top: 5px;
   left: 5px;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: bold;
 }
 
@@ -336,20 +280,23 @@ body {
   position: fixed;
   bottom: 80px;
   right: 20px;
-  width: 60px;
-  height: 60px;
-  background-color: #007bff;
+  width: 50px;
+  background-color: black;
   color: #fff;
   font-size: 36px;
   border: none;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
   z-index: 1500;
 }
 
 .floating-btn:hover {
-  background-color: #0056b3;
+  background-color: rgb(48, 46, 46);
+  color : white
 }
 /* === Swiper 공통 === */
 /* Swiper 컨테이너(연도, 월 각각)에 공통으로 적용할 기본 스타일 */
