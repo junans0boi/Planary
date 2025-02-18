@@ -1,27 +1,24 @@
-// src/components/TopBar/TopBar.jsx
 import { useState } from "react";
 import "./TopBar.css";
 
 // FontAwesome 아이콘 및 컴포넌트
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
-// 검색 모달 컴포넌트
+// 검색 모달 & DM 모달 컴포넌트
 import SearchModal from "./SearchModal";
+import DirectMessagePage from "../DirectMessage/DirectMessagePage";
 
 const NavBar = () => {
-  // 모달 표시 여부 관리 state
   const [isSearchModalOpen, setSearchModalOpen] = useState(false);
+  const [isDirectMessageOpen, setDirectMessageOpen] = useState(false);
 
-  const handleSearchClick = () => {
-    setSearchModalOpen(true);
-  };
+  const handleSearchClick = () => setSearchModalOpen(true);
+  const closeSearchModal = () => setSearchModalOpen(false);
 
-  const closeModal = () => {
-    setSearchModalOpen(false);
-  };
+  const handleDirectMessageClick = () => setDirectMessageOpen(true);
+  const closeDirectMessageModal = () => setDirectMessageOpen(false);
 
   return (
     <>
@@ -35,18 +32,24 @@ const NavBar = () => {
         </div>
 
         <div className="nav-right">
-          {/* 돋보기 아이콘에 onClick 핸들러 추가 */}
           <FontAwesomeIcon
             icon={faMagnifyingGlass}
             className="nav-icon"
             onClick={handleSearchClick}
             style={{ cursor: "pointer" }}
           />
-          <FontAwesomeIcon icon={faPaperPlane} className="nav-icon" />
+
+          <FontAwesomeIcon
+            icon={faPaperPlane}
+            className="nav-icon"
+            onClick={handleDirectMessageClick}
+            style={{ cursor: "pointer" }}
+          />
         </div>
       </nav>
-      {/* 모달 표시 조건부 렌더링 */}
-      {isSearchModalOpen && <SearchModal onClose={closeModal} />}
+
+      {isSearchModalOpen && <SearchModal onClose={closeSearchModal} />}
+      {isDirectMessageOpen && <DirectMessagePage onClose={closeDirectMessageModal} />}
     </>
   );
 };
