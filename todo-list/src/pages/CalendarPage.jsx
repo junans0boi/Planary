@@ -193,18 +193,21 @@ function CalendarPage() {
           if (view === "month") {
             const dateString = date.toISOString().split("T")[0];
             const daySchedules = schedules[dateString] || [];
-
+        
             return (
               <>
                 {/* 공휴일 라벨 */}
                 {holidays[dateString] && (
-                  <span className="holiday-tooltip">
-                    {holidays[dateString]}
-                  </span>
+                  <span className="holiday-tooltip">{holidays[dateString]}</span>
                 )}
-                {/* 일정 라벨 (다중 날짜 지원) */}
+        
+                {/* 일정 라벨 (태그 색상 적용) */}
                 {daySchedules.map((sch, idx) => (
-                  <div key={idx} className="schedule-label">
+                  <div 
+                    key={idx} 
+                    className="schedule-label"
+                    style={{ backgroundColor: sch.tagColor || "#ffe3ea", color: "#fff" }} // 태그 색상 적용
+                  >
                     {sch.title}
                   </div>
                 ))}
@@ -213,6 +216,7 @@ function CalendarPage() {
           }
           return null;
         }}
+        
         onClickDay={handleDayClick}
       />
 

@@ -177,3 +177,23 @@
   color: #333;
   font-size: 1.25rem;
 }
+
+.tag-color-picker {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.color-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.color-circle:hover {
+  transform: scale(1.2);
+  border-color: black;
+}

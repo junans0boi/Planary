@@ -1,128 +1,206 @@
+// AddScheduleModal.jsx
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-
-// Swiper 컴포넌트 및 모듈 임포트
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Mousewheel, FreeMode } from "swiper/modules";
-
-// Swiper 관련 CSS
-import "swiper/css";
-import "swiper/css/mousewheel";
-import "swiper/css/free-mode";
-
 import "./AddScheduleModal.css";
+import DateTimePickerPopup from "./DateTimePickerPopup";
+// 새로 추가할 모달
+import TagSelectModal from "./CategoryEditModal";
 
-const DateTimePickerPopup = ({ initialDate, onSave, onCancel }) => {
-  // 초기 날짜 값 분해 (JS의 월은 0부터 시작하므로 +1)
-  const initialYear = initialDate.getFullYear();
-  const initialMonth = initialDate.getMonth() + 1;
-  const initialDay = initialDate.getDate();
-  const initialHour = initialDate.getHours();
-  const initialMinute = initialDate.getMinutes();
+const AddScheduleModal = ({ onClose, onSave, selectedDate, isDayClick }) => {
+  const [title, setTitle] = useState("");
+  const [repeat, setRepeat] = useState("없음");
+  const [alarm, setAlarm] = useState("없음");
+  const [location, setLocation] = useState("");
+  const [memo, setMemo] = useState("");
 
-  // 선택한 날짜/시간 상태
-  const [year, setYear] = useState(initialYear);
-  const [month, setMonth] = useState(initialMonth);
-  const [day, setDay] = useState(initialDay);
-  const [hour, setHour] = useState(initialHour);
-  const [minute, setMinute] = useState(initialMinute);
+  // ✅ 선택된 태그(카테고리)를 저장할 상태
+  const [selectedTag, setSelectedTag] = useState(null);
 
-  // 스크롤 피커용 배열
-  const years = [2020, 2021, 2022, 2023, 2024, 2025];
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  const days = Array.from({ length: 31 }, (_, i) => i + 1);
-  const hours = Array.from({ length: 24 }, (_, i) => i);
-  const minutes = Array.from({ length: 60 }, (_, i) => i);
+  // 전달받은 selectedDate를 기준으로 기본 시작/종료시간 설정
+  const baseDate = selectedDate || new Date();
+  const year = baseDate.getFullYear();
+  const month = baseDate.getMonth();
+  const day = baseDate.getDate();
 
-  // Swiper 공통 옵션
-  const swiperProps = {
-    modules: [Mousewheel, FreeMode],
-    direction: "vertical",
-    freeMode: true,
-    mousewheel: {
-      forceToAxis: true,
-      releaseOnEdges: true,
-      sensitivity: 1.5,
-    },
-    slidesPerView: 5,
-    centeredSlides: true,
-    style: { height: 120, width: 60 },
-  };
+  const [startDateTime, setStartDateTime] = useState(new Date(year, month, day, 0, 0));
+  const [endDateTime, setEndDateTime] = useState(new Date(year, month, day, 23, 59));
 
-  const handleSave = () => {
-    const selectedDate = new Date(year, month - 1, day, hour, minute);
-    onSave(selectedDate);
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+
+  // ✅ 태그 선택 모달 열림 상태
+  const [isTagSelectModalOpen, setIsTagSelectModalOpen] = useState(false);
+
+  // 스케줄 저장 핸들러
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const schedule = {
+      title,
+      startTime: startDateTime,
+      endTime: endDateTime,
+      repeat,
+      alarm,
+      location,
+      memo,
+      // ✅ 선택된 태그 정보
+      tag: selectedTag?.title || "",
+      tagColor: selectedTag?.color || "#ffcc00", // 디폴트 색상
+      isPrivateTag: selectedTag?.isPrivate || false,
+    };
+    onSave(schedule);
+    onClose();
   };
 
   return (
-    <div className="modal-overlay datetime-picker-popup-overlay">
-      <div className="modal-content datetime-picker-popup-content">
-        <h3>날짜 및 시간 선택</h3>
-        <div className="datetime-picker-container" style={{ display: "flex", gap: "10px" }}>
-          {/* 연도 */}
-          <Swiper className="datetime-picker-swiper"
-            {...swiperProps}
-            initialSlide={years.indexOf(year)}
-            onSlideChange={(swiper) => setYear(years[swiper.activeIndex])}
-          >
-            {years.map((y) => (
-              <SwiperSlide key={y}>{y}년</SwiperSlide>
-            ))}
-          </Swiper>
-          {/* 월 */}
-          <Swiper className="datetime-picker-swiper"
-            {...swiperProps}
-            initialSlide={month - 1}
-            onSlideChange={(swiper) => setMonth(swiper.activeIndex + 1)}
-          >
-            {months.map((m) => (
-              <SwiperSlide key={m}>{m}월</SwiperSlide>
-            ))}
-          </Swiper>
-          {/* 일 */}
-          <Swiper className="datetime-picker-swiper"
-            {...swiperProps}
-            initialSlide={day - 1}
-            onSlideChange={(swiper) => setDay(swiper.activeIndex + 1)}
-          >
-            {days.map((d) => (
-              <SwiperSlide key={d}>{d}일</SwiperSlide>
-            ))}
-          </Swiper>
-          {/* 시 */}
-          <Swiper className="datetime-picker-swiper"
-            {...swiperProps}
-            initialSlide={hour}
-            onSlideChange={(swiper) => setHour(swiper.activeIndex)}
-          >
-            {hours.map((h) => (
-              <SwiperSlide key={h}>{h}시</SwiperSlide>
-            ))}
-          </Swiper>
-          {/* 분 */}
-          <Swiper className="datetime-picker-swiper"
-            {...swiperProps}
-            initialSlide={minute}
-            onSlideChange={(swiper) => setMinute(swiper.activeIndex)}
-          >
-            {minutes.map((min) => (
-              <SwiperSlide key={min}>{min}분</SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-        <div className="modal-buttons">
-          <button onClick={handleSave}>저장</button>
-          <button onClick={onCancel}>취소</button>
-        </div>
+    <div className="modal-overlay add-schedule-modal-overlay">
+      <div className="modal-content add-schedule-modal-content">
+        <h2>일정 추가</h2>
+
+        <form onSubmit={handleSubmit} className="add-schedule-form">
+          {/* 일정 제목 */}
+          <div className="form-group">
+            <label>제목</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              placeholder="일정 제목"
+            />
+          </div>
+
+          {/* 시작/종료 시간 */}
+          <div className="form-group">
+            <label>시작 시간</label>
+            <div className="datetime-display">
+              <span>{startDateTime.toLocaleString()}</span>
+              <button type="button" onClick={() => setShowStartPicker(true)}>
+                날짜 선택
+              </button>
+            </div>
+          </div>
+          <div className="form-group">
+            <label>종료 시간</label>
+            <div className="datetime-display">
+              <span>{endDateTime.toLocaleString()}</span>
+              <button type="button" onClick={() => setShowEndPicker(true)}>
+                날짜 선택
+              </button>
+            </div>
+          </div>
+
+          {/* 반복 */}
+          <div className="form-group">
+            <label>반복</label>
+            <select value={repeat} onChange={(e) => setRepeat(e.target.value)}>
+              <option value="없음">없음</option>
+              <option value="매일">매일</option>
+              <option value="매주">매주</option>
+              <option value="매월">매월</option>
+              <option value="매년">매년</option>
+            </select>
+          </div>
+
+          {/* === 태그 선택 === */}
+          <div className="form-group">
+            <label>태그 (카테고리)</label>
+            <button 
+              type="button" 
+              onClick={() => setIsTagSelectModalOpen(true)}
+              style={{ 
+                padding: "10px", 
+                border: "1px solid #ccc", 
+                borderRadius: "6px",
+                backgroundColor: "#fff", 
+                cursor: "pointer",
+                textAlign: "left"
+              }}
+            >
+              {selectedTag 
+                ? `#${selectedTag.title} (색상: ${selectedTag.color})`
+                : "태그를 선택하세요"}
+            </button>
+          </div>
+
+          {/* 알람, 위치, 메모 */}
+          <div className="form-group">
+            <label>알람</label>
+            <select value={alarm} onChange={(e) => setAlarm(e.target.value)}>
+              <option value="없음">없음</option>
+              <option value="5분 전">5분 전</option>
+              <option value="10분 전">10분 전</option>
+              <option value="15분 전">15분 전</option>
+              <option value="30분 전">30분 전</option>
+              <option value="1시간 전">1시간 전</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>위치</label>
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="장소 이름"
+            />
+          </div>
+          <div className="form-group">
+            <label>메모</label>
+            <textarea
+              value={memo}
+              onChange={(e) => setMemo(e.target.value)}
+              placeholder="메모를 입력하세요..."
+            />
+          </div>
+
+          {/* 버튼 영역 */}
+          <div className="modal-buttons">
+            <button type="submit">저장</button>
+            <button type="button" onClick={onClose}>취소</button>
+          </div>
+        </form>
       </div>
+
+      {/* DateTimePickerPopup (시작/종료) */}
+      {showStartPicker && (
+        <DateTimePickerPopup
+          initialDate={startDateTime}
+          onSave={(newDate) => {
+            setStartDateTime(newDate);
+            setShowStartPicker(false);
+          }}
+          onCancel={() => setShowStartPicker(false)}
+        />
+      )}
+      {showEndPicker && (
+        <DateTimePickerPopup
+          initialDate={endDateTime}
+          onSave={(newDate) => {
+            setEndDateTime(newDate);
+            setShowEndPicker(false);
+          }}
+          onCancel={() => setShowEndPicker(false)}
+        />
+      )}
+
+      {/* 태그 선택 모달 */}
+      {isTagSelectModalOpen && (
+        <TagSelectModal 
+          onClose={() => setIsTagSelectModalOpen(false)}
+          onSelectTag={(tag) => {
+            setSelectedTag(tag);
+            setIsTagSelectModalOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 };
 
-DateTimePickerPopup.propTypes = {
-  initialDate: PropTypes.instanceOf(Date).isRequired,
+AddScheduleModal.propTypes = {
+  onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
+  selectedDate: PropTypes.instanceOf(Date),
+  isDayClick: PropTypes.bool,
 };
 
-export default DateTimePickerPopup;
+export default AddScheduleModal;

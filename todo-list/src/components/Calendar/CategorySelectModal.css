@@ -1,0 +1,81 @@
+/* todo-list/src/components/Calendar/CategorySelectModal.css */
+
+.category-select-overlay {
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.category-select-content {
+  width: 90%;
+  max-width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.category-select-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  font-size: 1.5rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.add-button:hover {
+  background-color: #0056b3;
+}
+
+.category-list {
+  margin-top: 16px;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.category-color {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+}
+
+.category-name {
+  flex-grow: 1;
+  font-weight: 500;
+}
+
+.edit-button {
+  background-color: #ccc;
+  color: #333;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.edit-button:hover {
+  background-color: #999;
+}
+
+.modal-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

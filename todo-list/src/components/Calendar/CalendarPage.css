@@ -69,16 +69,15 @@ body {
 .schedule-label {
   display: inline-block;
   margin-top: 4px;
-  padding: 2px 8px;
+  padding: 4px 10px;
   font-size: 0.8rem;
   border-radius: 12px;
-  background-color: #ffe3ea; /* 파스텔 핑크 예시 */
-  color: #d9534f;           /* 핑크/레드 계열 텍스트 */
-  white-space: nowrap;      /* 한 줄 표시 */
+  background-color: #ffe3ea; /* 기본값 */
+  color: white;
+  white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
-
 
 /* 내비게이션 영역 숨김 (내부 화살표 제거) */
 .react-calendar__navigation {
