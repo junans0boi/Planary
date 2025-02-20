@@ -1,7 +1,9 @@
 // todo-list/src/components/Calendar/CategoryEditModal.jsx
+import { FontAwesomeIcon } from "../../FontAwesome";
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import "./CategoryEditModal.css";
+
 
 function CategoryEditModal({ category, onClose, onSave }) {
   // category가 있으면 편집, 없으면 새로 추가
@@ -36,10 +38,24 @@ function CategoryEditModal({ category, onClose, onSave }) {
   };
 
   return (
-    <div className="modal-overlay category-edit-overlay">
-      <div className="modal-content category-edit-content">
-        <h3>{isEdit ? "카테고리 수정" : "카테고리 추가"}</h3>
-        <form onSubmit={handleSubmit}>
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <form className="modal-form" onSubmit={handleSubmit}>
+          <nav className="modal-navbar">
+            <div className="modal-nav-left">
+              <FontAwesomeIcon
+                icon="chevron-left"
+                onClick={onClose}
+                style={{ cursor: "pointer" }}
+              />
+            </div>
+            <div className="modal-nav-title">
+              <h2>{isEdit ? "카테고리 수정" : "카테고리 추가"}</h2>
+            </div>
+            <div className="modal-nav-right">
+              <button type="submit">저장</button>
+            </div>
+          </nav>
           <div className="form-group">
             <label>카테고리 이름</label>
             <input
@@ -79,13 +95,6 @@ function CategoryEditModal({ category, onClose, onSave }) {
               />
               <span className="slider round"></span>
             </label>
-          </div>
-
-          <div className="modal-buttons">
-            <button type="submit">저장</button>
-            <button type="button" onClick={onClose}>
-              취소
-            </button>
           </div>
         </form>
       </div>

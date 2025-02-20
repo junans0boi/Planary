@@ -1,6 +1,8 @@
 // todo-list/src/components/Calendar/CategorySelectModal.jsx
+import { FontAwesomeIcon } from "../../FontAwesome";
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+
 import "./CategorySelectModal.css";
 import CategoryEditModal from "./CategoryEditModal";
 
@@ -33,14 +35,23 @@ function CategorySelectModal({
   };
 
   return (
-    <div className="modal-overlay category-select-overlay">
-      <div className="modal-content category-select-content">
-        <div className="category-select-header">
-          <h3>카테고리 선택</h3>
-          <button className="add-button" onClick={handleAddClick}>
-            +
-          </button>
-        </div>
+    <div className="modal-overlay ">
+      <div className="modal-content">
+        <nav className="modal-navbar">
+          <div className="modal-nav-left">
+            <FontAwesomeIcon
+              icon="chevron-left"
+              onClick={onClose}
+              style={{ cursor: "pointer" }}
+            />
+          </div>
+          <div className="modal-nav-title">
+            <h2>일정 추가</h2>
+          </div>
+          <div className="modal-nav-right">
+            <button onClick={handleAddClick}>추가</button>
+          </div>
+        </nav>
 
         <div className="category-list">
           {categories.map((cat) => (
@@ -66,11 +77,7 @@ function CategorySelectModal({
           ))}
         </div>
 
-        <div className="modal-buttons">
-          <button type="button" onClick={onClose}>
-            닫기
-          </button>
-        </div>
+        
       </div>
 
       {/* 카테고리 편집 모달 (추가/수정 겸용) */}

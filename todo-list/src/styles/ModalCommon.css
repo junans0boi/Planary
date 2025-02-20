@@ -2,65 +2,158 @@
 
 /* 모달 오버레이 */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* 모달 컨텐츠 */
+.modal-content {
+  width: 80%;
+  height: 80%;
+  background: #fff;
+  padding: 24px 32px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+  overflow-y: auto; /* 내용이 많을 경우 스크롤 생성 */
+
+}
+/* 제목 스타일 */
+.modal-content h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+
+/* 닫기 버튼 */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #000;
+}
+
+/* 모달 하단 버튼 영역 */
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-buttons button {
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #000;
+  transition: background-color 0.2s ease;
+}
+.modal-form{
+  margin-top:0px;
+}
+/* 폼 내부 스타일 */
+.modal-form .form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-form .form-group label {
+  margin-bottom: 8px;
+  text-align: left;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.modal-form .form-group input,
+.modal-form .form-group select,
+.modal-form .form-group textarea {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
+}
+
+.modal-form .form-group input:focus,
+.modal-form .form-group select:focus,
+.modal-form .form-group textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.modal-form .form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.modal-navbar {
+  /* 상단에 고정 */
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  /* 약간의 그림자 효과 */
+}
+
+/* 왼쪽 섹션 */
+.modal-nav-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  /* 왼쪽 정렬 */
+  margin-left: 0;
+  /* 왼쪽 여백 제거 */
+}
+
+/* 오른쪽 섹션 */
+.modal-nav-right {
+  display: flex;
+  /* block → flex로 변경 */
+  align-items: center;
+  justify-content: flex-end;
+  /* 오른쪽 정렬 */
+  margin-right: 10;
+  /* 오른쪽 여백 제거 */
+}
+
+.modal-nav-right button{
+  background-color: transparent;
+  font-weight: bold;
+}
+/* 페이드인 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
-  
-  /* 모달 컨텐츠 */
-  .modal-content {
-    background: #fff;
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    position: relative;
-    animation: fadeIn 0.3s ease-in-out;
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  /* 닫기 버튼 */
-  .modal-close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: transparent;
-    border: none;
-    font-size: 1.5em;
-    cursor: pointer;
-    color: #000;
-  }
-  
-  /* 모달 하단 버튼 영역 */
-  .modal-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  
-  .modal-buttons button {
-    padding: 10px 15px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  /* 페이드인 애니메이션 */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+}

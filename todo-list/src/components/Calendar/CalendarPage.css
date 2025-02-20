@@ -2,7 +2,6 @@
    공통 및 전체 배경 등
 -------------------- */
 body {
-
   margin: 0;
   padding: 0;
   background-color: #fff;
@@ -17,8 +16,7 @@ body {
   width: 100%;
   margin: 0 auto;
   padding: 0; 
-  background-color: #fff;
-  min-height: 100vh; /* 세로로도 충분히 차도록 */
+  background-color: #f5f7fc;
   box-sizing: border-box;
   text-align: center;
 }
@@ -27,7 +25,7 @@ body {
 .react-calendar {
   width: 100%;
   border: none;
-  /* 필요시 높이, min-height 등 추가 가능 */
+  border-radius: 2cap;
 }
 
 /* 상단바: 년도/월 선택 영역 */
@@ -37,7 +35,15 @@ body {
   justify-content: flex-start;
   /* 왼쪽 정렬 */
   gap: 10px;
-  margin-bottom: 20px;
+}
+
+
+/* 캘린더 상단 헤더 */
+.calendar-header h2 {
+  font-size: 1.4rem;
+  margin: 0;
+  color: #4f4f4f;
+  padding: 5px;
 }
 
 .year-select,
@@ -58,6 +64,7 @@ body {
 .selected-date {
   font-size: 1.2rem;
   color: #4f4f4f;
+  background-color: transparent;
   margin-top: 10px;
 }
 
@@ -73,7 +80,7 @@ body {
   font-size: 0.8rem;
   border-radius: 12px;
   background-color: #ffe3ea; /* 기본값 */
-  color: white;
+  color: black;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -92,17 +99,17 @@ body {
 
 .react-calendar__month-view__weekdays__weekday {
   color: #999;
+  padding-top: 15px;
 }
 
 .react-calendar__month-view__weekdays__weekday abbr {
   text-decoration: none;
-  font-size: 1.5rem;
-  color: #000;
+  font-size: 1.1rem;
+  color: #4f4b4b;
 }
-
 /* 날짜 타일 */
 .react-calendar__tile {
-  height: 120px;
+  height: 104px;
   position: relative;
   background: none;
   border-radius: 0;
@@ -118,7 +125,7 @@ body {
   position: absolute;
   top: 5px;
   left: 5px;
-  font-size: 1rem;
+  font-size: rem;
   font-weight: bold;
 }
 
@@ -194,95 +201,15 @@ body {
 }
 
 
-
-/* PC 버전: 화면 너비가 769px 이상인 경우 */
-/* PC 버전: 폭을 최대한 넓게 사용 */
-@media (min-width: 769px) {
-  .calendar-container {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .react-calendar {
-    width: 100%;
-    max-width: 100%;
-  }
-}
-
-/* 캘린더 상단 헤더 */
-.calendar-header h2 {
-  font-size: 3rem;
-  margin: 0;
-  color: #4f4f4f;
-  padding: 10px;
-}
-
-/* React Calendar 기본 스타일 (기존 코드 유지) */
-.react-calendar {
-  background: #fff;
-  border: none;
-  line-height: 1.125em;
-  margin: 0 auto;
-  
-}
-
-.react-calendar__tile {
-  height: 120px;
-  padding: 5px;
-  text-align: left;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.react-calendar__tile abbr {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
-.neighboring-month,
-.react-calendar__tile--neighboringMonth {
-  opacity: 0.5;
-}
-
-.sunday {
-  color: #e84118;
-}
-
-.saturday {
-  color: #007bff;
-}
-
-.holiday {
-  color: #e84118 !important;
-  font-weight: bold;
-}
-
-.holiday-tooltip {
-  font-size: 12px;
-  margin-left: 5px;
-  cursor: pointer;
-  color: #e84118;
-}
-
-/* 선택된 날짜 안내 */
-.selected-date {
-  font-size: 1.2rem;
-  color: #4f4f4f;
-  margin-top: 10px;
-}
-
 /* 플로팅 버튼 (우측 하단) */
 .floating-btn {
   position: fixed;
-  bottom: 80px;
+  bottom: 60px;
   right: 20px;
-  width: 50px;
+  width: 30px;
   background-color: black;
   color: #fff;
-  font-size: 36px;
+  font-size: 27px;
   border: none;
   border-radius: 50%;
   display: flex;
@@ -297,43 +224,21 @@ body {
   background-color: rgb(48, 46, 46);
   color : white
 }
-/* === Swiper 공통 === */
-/* Swiper 컨테이너(연도, 월 각각)에 공통으로 적용할 기본 스타일 */
-.swiper {
-  width: 120px;        /* 선택 박스 너비 (원하는 크기로 조정) */
-  height: 200px;       /* 선택 박스 높이 (YearMonthModal 코드와 동일하게 조정) */
-  margin: 0 auto;      /* 가운데 정렬 */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;    /* 내부 내용 넘침 방지 */
+
+/* PC 버전: 화면 너비가 769px 이상인 경우 */
+/* PC 버전: 폭을 최대한 넓게 사용 */
+@media (min-width: 769px) {
+  .calendar-container {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .react-calendar {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  
 }
 
-/* 슬라이드 기본 스타일 */
-.swiper-slide {
-  /* 세로 방향일 때, 중앙 정렬 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
 
-  font-size: 1.2rem;
-  color: #333;
-  transition: transform 0.2s;
-}
-
-/* 활성 슬라이드(가운데 선택된 연/월) 강조 효과 */
-.swiper-slide.swiper-slide-active {
-  font-weight: bold;
-  color: #007bff;
-  transform: scale(1.05);
-}
-
-/* 필요에 따라 이전/다음 슬라이드 희미하게 표현하고 싶다면 */
-/* .swiper-slide-prev, .swiper-slide-next 사용 가능 예시 */
-/* .swiper-slide-prev, .swiper-slide-next {
-  opacity: 0.6;
-} */
-
-/* Swiper Wrapper(내부) 스타일 */
-.swiper-wrapper {
-  /* 필요한 경우 추가 설정 */
-}

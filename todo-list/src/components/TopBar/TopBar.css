@@ -6,7 +6,7 @@
     left: 0;
     right: 0;
     height: 60px;
-    background-color: white;
+    background-color: #f5f7fc;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -23,7 +23,9 @@
     justify-content: flex-start; /* 왼쪽 정렬 */
     margin-left: 0; /* 왼쪽 여백 제거 */
 }
-
+.year-month-btn{
+    background-color: transparent;
+}
 /* 오른쪽 섹션 */
 .nav-right {
     display: flex; /* block → flex로 변경 */
@@ -47,13 +49,3 @@
     margin-left: 15px;
     cursor: pointer;
 }
-/* 
-@media (max-width: 768px) {
-    .nav-bar {
-        padding: 0 10px;
-    }
-
-    .nav-right .nav-icon {
-        margin-left: 10px;
-    }
-} */

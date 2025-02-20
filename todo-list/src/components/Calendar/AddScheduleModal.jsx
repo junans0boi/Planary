@@ -1,11 +1,11 @@
 // todo-list/src/components/Calendar/AddScheduleModal.jsx
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { FontAwesomeIcon } from "../../FontAwesome";
 import "./AddScheduleModal.css";
 import DateTimePickerPopup from "./DateTimePickerPopup";
-
-// 새로 추가할 모달
 import CategorySelectModal from "./CategorySelectModal";
+
 
 const AddScheduleModal = ({ onClose, onSave, selectedDate, isDayClick }) => {
   const [title, setTitle] = useState("");
@@ -66,10 +66,26 @@ const AddScheduleModal = ({ onClose, onSave, selectedDate, isDayClick }) => {
   };
 
   return (
-    <div className="modal-overlay add-schedule-modal-overlay">
-      <div className="modal-content add-schedule-modal-content">
-        <h2>일정 추가</h2>
-        <form onSubmit={handleSubmit} className="add-schedule-form">
+    <div className="modal-overlay ">
+      <div className="modal-content">
+        <form onSubmit={handleSubmit} className="modal-form">
+          <div className="form-group">
+            <nav className="modal-navbar">
+              <div className="modal-nav-left">
+                <FontAwesomeIcon
+                  icon="chevron-left"
+                  onClick={onClose}
+                  style={{ cursor: "pointer" }}
+                />
+              </div>
+              <div className="modal-nav-title">
+                <h2>일정 추가</h2>
+              </div>
+              <div className="modal-nav-right">
+                <button type="submit">저장</button>
+              </div>
+            </nav>
+          </div>
           <div className="form-group">
             <label>제목</label>
             <input
@@ -176,13 +192,6 @@ const AddScheduleModal = ({ onClose, onSave, selectedDate, isDayClick }) => {
               placeholder="메모를 입력하세요..."
             />
           </div>
-
-          <div className="modal-buttons">
-            <button type="submit">저장</button>
-            <button type="button" onClick={onClose}>
-              취소
-            </button>
-          </div>
         </form>
       </div>
 
@@ -194,7 +203,7 @@ const AddScheduleModal = ({ onClose, onSave, selectedDate, isDayClick }) => {
             setStartDateTime(newDate);
             setShowStartPicker(false);
           }}
-          onCancel={() => setShowStartPicker(false)}
+          onClose={() => setShowStartPicker(false)}
         />
       )}
       {showEndPicker && (
@@ -204,7 +213,7 @@ const AddScheduleModal = ({ onClose, onSave, selectedDate, isDayClick }) => {
             setEndDateTime(newDate);
             setShowEndPicker(false);
           }}
-          onCancel={() => setShowEndPicker(false)}
+          onClose={() => setShowEndPicker(false)}
         />
       )}
 
@@ -226,6 +235,7 @@ const AddScheduleModal = ({ onClose, onSave, selectedDate, isDayClick }) => {
           }}
         />
       )}
+      
     </div>
   );
 };

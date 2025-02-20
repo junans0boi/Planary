@@ -1,10 +1,9 @@
+import { FontAwesomeIcon } from "../../FontAwesome";  
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import "./BottomNav.css";
-import "../../FontAwesome";
-// FontAwesomeIcon 컴포넌트를 사용하기 위해 import
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 
 const BottomNav = () => {
     // 선택된 아이콘을 관리하는 state
@@ -14,7 +13,10 @@ const BottomNav = () => {
         <nav className="wrapper">
             <div>
                 <Link to="/" className="nav-link" onClick={() => setActiveNav(1)}>
-                    <FontAwesomeIcon icon="home" className={activeNav === 1 ? "nav-item active" : "nav-item"} />
+                    <FontAwesomeIcon
+                                icon="house"
+                                className={activeNav === 1 ? "nav-item active" : "nav-item"}
+                              />
                 </Link>
             </div>
             <div>
