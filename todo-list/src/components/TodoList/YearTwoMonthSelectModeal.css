@@ -1,0 +1,76 @@
+@import "../../styles/ModalCommon.css";
+
+/* 오버레이는 공통 스타일 사용 */
+
+/* 모달 컨텐츠: 중앙 정렬, 최대 너비 지정 */
+.modal-content {
+    width: 90%;
+    max-width: 400px;
+    padding: 30px 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+/* 제목 스타일 */
+.modal-content h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* 년/월 선택 영역 레이아웃 */
+/* 두 스크롤 피커가 서로 붙도록 gap을 0으로 설정 */
+.modal-content > div {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 20px;
+}
+
+/* Swiper 기본 스타일 */
+/* 연/월 선택 Swiper 컨테이너 내에서만 스타일 적용 */
+.year-month-swiper {
+    width: 150px !important;
+    height: 200px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.year-month-swiper .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #444;
+    transition: transform 0.2s ease-in-out;
+}
+
+.year-month-swiper .swiper-slide-active {
+    font-size: 1.5rem;
+    color: #007bff;
+    transform: scale(1.1);
+}
+
+/* 버튼 스타일 */
+.modal-buttons button:first-child {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.modal-buttons button:first-child:hover {
+    background-color: #0056b3;
+}
+
+.modal-buttons button:last-child {
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+.modal-buttons button:last-child:hover {
+    background-color: #dcdcdc;
+}
