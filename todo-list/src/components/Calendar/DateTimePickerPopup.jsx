@@ -1,6 +1,5 @@
+import { FontAwesomeIcon } from "../../FontAwesome";
 import React, { useState } from "react";
-import PropTypes from "prop-types";
-
 // Swiper 컴포넌트 및 모듈 임포트
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Mousewheel, FreeMode } from "swiper/modules";
@@ -12,7 +11,7 @@ import "swiper/css/free-mode";
 
 import "./AddScheduleModal.css";
 
-const DateTimePickerPopup = ({ initialDate, onSave, onCancel }) => {
+const DateTimePickerPopup = ({ initialDate, onSave, onClose }) => {
   // 초기 날짜 값 분해 (JS의 월은 0부터 시작하므로 +1)
   const initialYear = initialDate.getFullYear();
   const initialMonth = initialDate.getMonth() + 1;
@@ -55,9 +54,24 @@ const DateTimePickerPopup = ({ initialDate, onSave, onCancel }) => {
   };
 
   return (
-    <div className="modal-overlay datetime-picker-popup-overlay">
-      <div className="modal-content datetime-picker-popup-content">
-        <h3>날짜 및 시간 선택</h3>
+    <div className="modal-overlay">
+      <div className="modal-content">
+
+        <nav className="modal-navbar">
+          <div className="modal-nav-left">
+            <FontAwesomeIcon
+              icon="chevron-left"
+              onClick={onClose}
+              style={{ cursor: "pointer" }}
+            />
+          </div>
+          <div className="modal-nav-title">
+            <h2>날짜 및 시간 선택</h2>
+          </div>
+          <div className="modal-nav-right">
+            <button onClick={handleSave} >저장</button>
+          </div>
+        </nav>
         <div className="datetime-picker-container" style={{ display: "flex", gap: "10px" }}>
           {/* 연도 */}
           <Swiper className="datetime-picker-swiper"
@@ -110,19 +124,10 @@ const DateTimePickerPopup = ({ initialDate, onSave, onCancel }) => {
             ))}
           </Swiper>
         </div>
-        <div className="modal-buttons">
-          <button onClick={handleSave}>저장</button>
-          <button onClick={onCancel}>취소</button>
-        </div>
+
       </div>
     </div>
   );
-};
-
-DateTimePickerPopup.propTypes = {
-  initialDate: PropTypes.instanceOf(Date).isRequired,
-  onSave: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
 };
 
 export default DateTimePickerPopup;

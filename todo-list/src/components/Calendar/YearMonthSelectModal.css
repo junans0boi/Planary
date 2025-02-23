@@ -1,32 +1,6 @@
 @import "../../styles/ModalCommon.css";
 
-/* 오버레이는 공통 스타일 사용 */
 
-/* 모달 컨텐츠: 중앙 정렬, 최대 너비 지정 */
-.modal-content {
-    width: 90%;
-    max-width: 400px;
-    padding: 30px 20px;
-    border-radius: 12px;
-    text-align: center;
-}
-
-/* 제목 스타일 */
-.modal-content h2 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 15px;
-}
-
-/* 년/월 선택 영역 레이아웃 */
-/* 두 스크롤 피커가 서로 붙도록 gap을 0으로 설정 */
-.modal-content > div {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    margin-bottom: 20px;
-}
 
 /* Swiper 기본 스타일 */
 /* 연/월 선택 Swiper 컨테이너 내에서만 스타일 적용 */

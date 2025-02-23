@@ -1,31 +1,42 @@
 // src/components/DirectMessage/DirectMessagePage.jsx
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faCommentMedical } from "@fortawesome/free-solid-svg-icons";
-import "./DirectMessagePage.css"; // CSS 파일을 임포트합니다.
+import React from "react";
+import PropTypes from "prop-types";
+import { FontAwesomeIcon } from "../../FontAwesome";
+import "./DirectMessagePage.css";
 
-function DirectMessagePage() {
+function DirectMessagePage({ onClose }) {
   return (
-    <>
-      <nav className="nav-bar">
-        <div className="nav-left">
-          <FontAwesomeIcon icon={faChevronLeft} />
+    // dm-layer는 페이지 전체를 덮는 레이어 역할을 합니다.
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <nav className="modal-navbar">
+          <div className="modal-nav-left">
+            <FontAwesomeIcon
+              icon="chevron-left"
+              onClick={onClose}
+              style={{ cursor: "pointer" }}
+            />
+          </div>
+          <div className="modal-nav-title">
+            <h2>Direct Message</h2>
+          </div>
+          <div className="modal-nav-right">
+            <FontAwesomeIcon icon="user-plus" className="nav-icon"/>
+            <FontAwesomeIcon icon="comment-medical" className="nav-icon"/>
+          </div>
+        </nav>
+        <div className="form-group">
+          <p>친구와 대화를 시작해보세요.</p>
+          <p>좋은 대화의 시작이 되었으면 좋겠습니다.</p>
+          <button className="dm-button">대화하기</button>
         </div>
-        <div className="title">
-          <h3>Direct Message</h3>
-        </div>
-        <div className="nav-right">
-          {/* 댓글 관련 아이콘, 필요 시 onClick 핸들러를 추가하세요 */}
-          <FontAwesomeIcon icon={faCommentMedical} />
-        </div>
-      </nav>
-      
-      <div className="content">
-        <p>친구와 대화를 시작해보세요.</p>
-        <p>좋은 대화와 시작이 되었으면 좋겠습니다.</p>
-        <button className="search-button">대화하기</button>
       </div>
-    </>
+    </div>
   );
 }
+
+DirectMessagePage.propTypes = {
+  onClose: PropTypes.func,
+};
 
 export default DirectMessagePage;

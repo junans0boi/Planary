@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from "../../FontAwesome";
 import { useState } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Mousewheel, FreeMode } from 'swiper/modules';
@@ -25,8 +26,21 @@ function YearMonthSelectModal({ currentYear, currentMonth, onClose, onSelect }) 
   return (
     <div className="modal-overlay year-month-modal">
       <div className="modal-content">
-        <h2>년/월 선택</h2>
-
+        <nav className="modal-navbar">
+          <div className="modal-nav-left">
+            <FontAwesomeIcon
+              icon="chevron-left"
+              onClick={onClose}
+              style={{ cursor: "pointer" }}
+            />
+          </div>
+          <div className="modal-nav-title">
+            <h2>년/월 선택</h2>
+          </div>
+          <div className="modal-nav-right">
+            <button onClick={handleSubmit} >선택</button>
+          </div>
+        </nav>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           {/* 년도 선택 Swiper */}
           <div>
@@ -79,15 +93,6 @@ function YearMonthSelectModal({ currentYear, currentMonth, onClose, onSelect }) 
               ))}
             </Swiper>
           </div>
-        </div>
-
-        <div className="modal-buttons">
-          <button type="button" onClick={handleSubmit}>
-            선택
-          </button>
-          <button type="button" onClick={onClose}>
-            취소
-          </button>
         </div>
       </div>
     </div>
