@@ -11,15 +11,15 @@ const AddDiaryModal = ({ onClose, onSave, selectedDate, initialDiary }) => {
 
   useEffect(() => {
     if (initialDiary) {
-      setTitle(initialDiary.title);
-      setContent(initialDiary.content);
-      setEmotion(initialDiary.emotion);
-      setIsEditing(false);
+      setTitle(initialDiary.title || "");
+      setContent(initialDiary.content || "");
+      setEmotion(initialDiary.emotion || 1);
+      setIsEditing(false); // 처음에는 수정 모드 X
     } else {
       setTitle("");
       setContent("");
       setEmotion(1);
-      setIsEditing(true);
+      setIsEditing(true); // 새 일기 작성 시에는 수정 모드 O
     }
   }, [initialDiary, selectedDate]);
 
@@ -27,7 +27,7 @@ const AddDiaryModal = ({ onClose, onSave, selectedDate, initialDiary }) => {
     const diary = {
       title,
       content,
-      emotion,
+      emotion, // ✅ 감정도 함께 저장
       date: selectedDate,
     };
 
@@ -42,17 +42,30 @@ const AddDiaryModal = ({ onClose, onSave, selectedDate, initialDiary }) => {
   return (
     <ModalWithCloseButton onClose={onClose}>
       <h2>오늘의 감정</h2>
+      
+      {/* ✅ 감정 표시 */}
       <div className="emotion-container">
-        {[1, 2, 3, 4, 5].map((num) => (
+        {!isEditing ? (
+          // ✅ 수정 모드가 아닐 때: 선택한 감정 하나만 보여줌
           <img
-            key={num}
-            src={`/img/emotion/emotion${num}.png`}
-            alt={`감정 ${num}`}
-            className={emotion === num ? "selected" : ""}
-            onClick={() => isEditing && setEmotion(num)}
-            style={{ width: "40px", height: "40px", margin: "5px" }} // ✅ 감정 크기 조절
+            src={`/img/emotion/emotion${emotion}.png`}
+            alt={`감정 ${emotion}`}
+            className="selected"
+            style={{ width: "50px", height: "50px", margin: "5px" }}
           />
-        ))}
+        ) : (
+          // ✅ 수정 모드일 때: 모든 감정 선택 가능
+          [1, 2, 3, 4, 5].map((num) => (
+            <img
+              key={num}
+              src={`/img/emotion/emotion${num}.png`}
+              alt={`감정 ${num}`}
+              className={emotion === num ? "selected" : ""}
+              onClick={() => setEmotion(num)}
+              style={{ width: "40px", height: "40px", margin: "5px", cursor: "pointer" }}
+            />
+          ))
+        )}
       </div>
 
       <div className="form-group">
@@ -78,7 +91,6 @@ const AddDiaryModal = ({ onClose, onSave, selectedDate, initialDiary }) => {
         />
       </div>
 
-      {/* ✅ 버튼 컨테이너: 완료, 수정, 취소 버튼 정렬 */}
       <div className="button-container">
         <button onClick={handleSave} className="complete-btn">완료</button>
         {!isEditing && <button onClick={() => setIsEditing(true)} className="edit-btn">수정</button>}

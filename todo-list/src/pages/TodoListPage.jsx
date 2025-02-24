@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import YearMonthModal from "../components/TodoList/YearTwoMonthSelectModal";
-import AddDiaryModal from "../components/TodoList/AddDiaryModal"; // ✅ 오타 수정
-import "../components/TodoList/TodoListpage.css"; // ✅ CSS 추가
+import AddDiaryModal from "../components/TodoList/AddDiaryModal"; 
+import "../components/TodoList/TodoListpage.css"; 
 
 function TodoListPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -25,7 +25,7 @@ function TodoListPage() {
     setIsDiaryModalOpen(true);
   };
 
-  // ✅ 일기 저장 및 업데이트
+  // ✅ 일기 저장 및 업데이트 (감정 포함)
   const handleSaveDiary = (diary) => {
     const dateKey = diary.date.toISOString().split("T")[0];
 
@@ -70,7 +70,7 @@ function TodoListPage() {
         />
       )}
 
-      {/* ✅ 캘린더 - 공휴일 & 감정 데이터 적용 */}
+      {/* ✅ 캘린더 - 감정 데이터 적용 */}
       <Calendar
         onClickDay={handleDayClick}
         value={selectedDate}
