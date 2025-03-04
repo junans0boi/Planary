@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import YearMonthModal from "../components/TodoList/YearTwoMonthSelectModal";
-import AddDiaryModal from "../components/TodoList/AddDiaryModal"; 
-import "../components/TodoList/TodoListpage.css"; 
+import AddDiaryModal from "../components/TodoList/AddDiaryModal";
+import "../components/TodoList/TodoListpage.css";
+import TopBar from "../components/TopBar/TopBar";
 
 function TodoListPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -25,6 +26,12 @@ function TodoListPage() {
     setIsDiaryModalOpen(true);
   };
 
+  // TopBar에서 전달 받은 연/월 변경 핸들러
+  const handleYearMonthChange = (year, month) => {
+    setDisplayYear(year);
+    setDisplayMonth(month - 1);
+  };
+
   // ✅ 일기 저장 및 업데이트 (감정 포함)
   const handleSaveDiary = (diary) => {
     const dateKey = diary.date.toISOString().split("T")[0];
@@ -39,9 +46,14 @@ function TodoListPage() {
 
   return (
     <div className="calendar-container">
-      <div 
-        className="calendar-header" 
-        onClick={() => setIsYearMonthModalOpen(true)} 
+      <TopBar
+        displayYear={displayYear}
+        displayMonth={displayMonth}
+        onYearMonthChange={handleYearMonthChange}
+      />
+      <div
+        className="calendar-header"
+        onClick={() => setIsYearMonthModalOpen(true)}
         style={{ cursor: "pointer", textAlign: "left" }}
       >
         <h2>{displayYear}년 {displayMonth + 1}월</h2>
@@ -62,11 +74,11 @@ function TodoListPage() {
 
       {/* ✅ 일기 작성/수정 모달 */}
       {isDiaryModalOpen && (
-        <AddDiaryModal 
-          onClose={() => setIsDiaryModalOpen(false)} 
-          onSave={handleSaveDiary} 
-          selectedDate={selectedDate} 
-          initialDiary={diaries[selectedDate.toISOString().split("T")[0]] || null} 
+        <AddDiaryModal
+          onClose={() => setIsDiaryModalOpen(false)}
+          onSave={handleSaveDiary}
+          selectedDate={selectedDate}
+          initialDiary={diaries[selectedDate.toISOString().split("T")[0]] || null}
         />
       )}
 
@@ -82,9 +94,9 @@ function TodoListPage() {
             const day = date.getDay();
 
             if (date.getMonth() !== activeStartDate.getMonth()) return "neighboring-month";
-            if (day === 0) return "sunday"; 
-            if (day === 6) return "saturday"; 
-            if (holidays[dateString]) return "holiday"; 
+            if (day === 0) return "sunday";
+            if (day === 6) return "saturday";
+            if (holidays[dateString]) return "holiday";
           }
           return null;
         }}
