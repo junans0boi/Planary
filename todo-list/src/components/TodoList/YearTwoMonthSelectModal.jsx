@@ -4,7 +4,8 @@ import { Mousewheel, FreeMode } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/mousewheel';
 import 'swiper/css/free-mode';
-import "/Users/choejeonghui/Documents/GitHub/Todo-List/todo-list/src/components/TodoList/YearTwoMonthSelectModeal.css";
+import '../TodoList/YearTwoMonthSelectModeal.css'
+
 
 function YearMonthSelectModal({ currentYear, currentMonth, onClose, onSelect }) {
   const [selectedYear, setSelectedYear] = useState(currentYear);
