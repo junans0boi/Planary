@@ -5,6 +5,7 @@ import AddScheduleModal from "../components/Calendar/AddScheduleModal";
 import { FontAwesomeIcon } from "../FontAwesome";
 import TopBar from "../components/TopBar/TopBar";
 import "../components/Calendar/CalendarPage.css";
+import { useNavigate } from "react-router-dom"; 
 
 function CalendarPage() {
   // 선택된 날짜
@@ -23,6 +24,10 @@ function CalendarPage() {
   // 일정 목록 (날짜별)
   const [schedules, setSchedules] = useState({});
 
+
+  const navigate = useNavigate(); // ✅ 페이지 이동을 위한 useNavigate 추가
+
+  
   // displayYear, displayMonth 변경 시 캘린더 시작 날짜 업데이트
   useEffect(() => {
     setActiveStartDate(new Date(displayYear, displayMonth, 1));
