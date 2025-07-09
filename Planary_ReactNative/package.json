@@ -1,0 +1,38 @@
+{
+  "name": "planary_reactnative",
+  "license": "0BSD",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "web": "expo start --web",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    
+    "electron:dev": "concurrently \"npm:electron:serve\" \"npm run electron:start\"",
+    "electron:serve": "npm run web",
+    "electron:start": "wait-on http://localhost:19006 && electron .",
+    
+    "electron:build": "expo build:web && electron-builder"
+  },
+  "dependencies": {
+    "expo": "~53.0.17",
+    "expo-status-bar": "~2.2.3",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-native": "0.79.5",
+    "react-native-gesture-handler": "^2.27.1",
+    "react-native-reanimated": "^3.18.0",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "~4.11.1",
+    "react-native-web": "~0.20.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "concurrently": "^9.2.0",
+    "electron": "^37.2.0",
+    "electron-builder": "^26.0.12",
+    "wait-on": "^8.0.3"
+  },
+  "private": true
+}
