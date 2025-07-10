@@ -4,9 +4,6 @@ import { View, Text, StyleSheet } from 'react-native';
 export default function DiaryScreen() {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>할 일</Text>
-      </View>
       <View style={styles.body}>
         <Text>여기에 투두 리스트 컴포넌트가 들어갑니다.</Text>
       </View>

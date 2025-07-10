@@ -6,10 +6,7 @@ export default function CalendarScreen() {
   return (
     <View style={styles.container}>
       {/* 공통 헤더 (웹에서는 사이드바가 대신 헤더 역할) */}
-      <View style={styles.header}>
-        <Text style={styles.title}>TODAY</Text>
-        {/* 검색, 메뉴 아이콘 등 */}
-      </View>
+      
 
       {/* 본문 */}
       <View style={styles.body}>
