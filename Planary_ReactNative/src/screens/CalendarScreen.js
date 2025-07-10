@@ -1,6 +1,7 @@
 // src/screens/CalendarScreen.js
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import Calendar from '../components/Calendar';
 
 export default function CalendarScreen() {
   return (
@@ -10,7 +11,7 @@ export default function CalendarScreen() {
 
       {/* 본문 */}
       <View style={styles.body}>
-        <Text>여기에 캘린더 컴포넌트가 들어갑니다.</Text>
+        <Calendar />
       </View>
     </View>
   );
