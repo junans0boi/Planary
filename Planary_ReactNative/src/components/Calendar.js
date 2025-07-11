@@ -8,21 +8,27 @@ import { MyModal } from '../components/MyModal'
 // 1. 로케일 설정
 LocaleConfig.locales.ko = {
   monthNames:      ['01월','02월','03월','04월','05월','06월','07월','08월','09월','10월','11월','12월'],
-  monthNamesShort: ['01월','02월','03월','04월','05월','06월','07월','08월','09월','10월','11월','12월'],
+  monthNamesShort: ['01','02','03','04','05','06','07','08','09','10','11','12'],
   dayNames:        ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'],
   dayNamesShort:   ['일','월','화','수','목','금','토'],
   today:           '오늘'
 }
+
 LocaleConfig.defaultLocale = 'ko'
 
 export default function CalendarScreen() {
   const today = new Date().toISOString().split('T')[0]
-  const [current, setCurrent] = useState(today)
+  const [current, setCurrent]       = useState(today)
   const [selectedDate, setSelected] = useState(null)
-  const [modalVisible, setModal] = useState(false)
-  const [specificDates, setSpecificDates] = useState([]) // 공휴일 날짜 저장
+  const [modalVisible, setModal]    = useState(false)
+  const [specificDates, setSpecificDates] = useState([])
 
-  // 날짜 선택 시 모달 열기
+  // 예시 memoMap
+  const memoMap = {
+    '2025-07-11': '회의',
+    '2025-07-15': '출장',
+  }
+
   const handleDayPress = day => {
     setSelected(day.dateString)
     setModal(true)
@@ -39,37 +45,49 @@ export default function CalendarScreen() {
     setCurrent(d.toISOString().split('T')[0])
   }
 
-  // 날짜 형식 변환: 20250710 → 2025-07-10
   const formatDate = yyyymmdd => {
-    const str = yyyymmdd.toString()
-    return `${str.slice(0,4)}-${str.slice(4,6)}-${str.slice(6,8)}`
+    const s = String(yyyymmdd)
+    return `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`
   }
 
-  // 공휴일 API 호출 (공공데이터포털 예시)
-  const GetDate = async () => {
-    try {
-      const res = await axios.get(
-        'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo',
-        {
-          params: {
-            ServiceKey: 'gjBx3AJwGl7IpsyH5u4vhWT4ttQrF%2FtZQuvFlW8mFLDOnloc%2FmQrv0h1hgK%2FsVZt%2BHTghN6FWJ2VhUF1nozcZA%3D%3D',
-            solYear: new Date().getFullYear(),
-            numOfRows: 100,
-            _type: 'json'
-          }
-        }
-      )
-      const items = res.data?.response?.body?.items?.item || []
-      const dates = items.map(item => formatDate(item.locdate))
-      setSpecificDates(dates)
-    } catch (err) {
-      console.error('공휴일 API 오류:', err)
+  const buildMarked = () => {
+    const marked = {
+      [today]:        { marked: true, dotColor: 'skyblue' },
+      [selectedDate]: { selected: true, selectedColor: 'blue' },
     }
+    specificDates.forEach(d => {
+      marked[d] = { marked: true, dotColor: 'transparent' }
+    })
+    return marked
   }
+// 공휴일 API 호출 함수
+const GetDate = async () => {
+  try {
+    const res = await axios.get(
+      'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo',
+      {
+        params: {
+          serviceKey: '%2FeCLSPpRZ0cIJ9UF4HHDfjVScQcnjw8gHOtd7EhAq2J0Jbk%2F9TW9IknbAOaC3ZvMn20Qzf4PWRiz9%2F%2BEkYt%2B1g%3D%3D',  // ← 인코딩된 키 전체를 붙여넣으세요
+          solYear:    new Date().getFullYear(),
+          pageNo:     1,
+          numOfRows:  100,
+          _type:      'json'
+        }
+      }
+    )
+    const items = res.data.response.body.items.item || []
+    const dates = items.map(item => formatDate(item.locdate))
+    setSpecificDates(dates)
+  } catch (err) {
+    console.error('공휴일 API 오류:', err.response?.data || err)
+  }
+}
 
-  useEffect(() => {
-    GetDate()
-  }, [])
+// 컴포넌트 마운트 시 한 번만 공휴일 불러오기
+useEffect(() => {
+  GetDate()
+}, [])
+
 
   return (
     <View style={styles.container}>
@@ -79,42 +97,43 @@ export default function CalendarScreen() {
         onDayPress={handleDayPress}
         hideArrows={true}
 
-        // 커스텀 헤더
         renderHeader={date => {
-          const year = date.getFullYear()
+          const year  = date.getFullYear()
           const month = String(date.getMonth() + 1).padStart(2, '0')
           return (
-            <View style={styles.headerRow}>
-              <Text style={styles.headerText}>
-                {`${year}.${month}`}
-              </Text>
-              <View style={styles.arrowGroup}>
-                <TouchableOpacity onPress={goPrev} style={styles.arrowBtn}>
-                  <Text style={styles.arrow}>{'<'}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={goNext} style={styles.arrowBtn}>
-                  <Text style={styles.arrow}>{'>'}</Text>
-                </TouchableOpacity>
+            <View style={styles.headerContainer}>
+              <View style={styles.headerLeft}>
+                <Text style={styles.headerText}>
+                  {`${year}.${month}`}
+                </Text>
+                <View style={styles.arrowGroup}>
+                  <TouchableOpacity onPress={goPrev} style={styles.arrowBtn}>
+                    <Text style={styles.arrow}>{'<'}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={goNext} style={styles.arrowBtn}>
+                    <Text style={styles.arrow}>{'>'}</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           )
         }}
 
-        // dayComponent 에서 공휴일·오늘·선택일 스타일 직접 적용
         dayComponent={({ date, state }) => {
-          const isToday    = date.dateString === today
-          const isSelected = date.dateString === selectedDate
-          const isHoliday  = specificDates.includes(date.dateString)
-
+          const dStr       = date.dateString
+          const isToday    = dStr === today
+          const isSelected = dStr === selectedDate
+          const isHoliday  = specificDates.includes(dStr)
+          const memo       = memoMap[dStr]
+          
           const containerStyle = [
-            styles.CustomDay,
-            isToday    && styles.todayContainer,
-            isSelected && styles.selectedContainer
+            styles.dayContainer,
+            isToday    && styles.todayBg,
+            isSelected && styles.selectedBg
           ]
-
           const textStyle = [
             styles.dayText,
-            state === 'disabled' && styles.disabledDay,
+            state === 'disabled' && styles.disabledText,
             isHoliday             && styles.holidayText,
             (isToday || isSelected) && styles.selectedText
           ]
@@ -122,29 +141,59 @@ export default function CalendarScreen() {
           return (
             <TouchableOpacity
               style={containerStyle}
-              onPress={() => handleDayPress({ dateString: date.dateString })}
+              onPress={() => handleDayPress({ dateString: dStr })}
             >
-              <Text style={textStyle}>
-                {date.day}
-              </Text>
+              <Text style={textStyle}>{date.day}</Text>
+              {memo && (
+                <Text style={styles.memoText} numberOfLines={1}>
+                  {memo}
+                </Text>
+              )}
             </TouchableOpacity>
           )
         }}
 
-        // 오늘에만 dot 표시
-        markedDates={{
-          [today]: { marked: true, dotColor: 'skyblue' }
-        }}
+        markedDates={buildMarked()}
         markingType="custom"
 
-        // 기본 테마
         theme={{
-          textSectionTitleColor: "#242424",
+          // 요일 색상
           'stylesheet.calendar.header': {
-            dayTextAtIndex0: { color: "#FF5656" },
-            dayTextAtIndex6: { color: "#4766FF" }
-          }
+            header: {
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              paddingHorizontal: 16,
+              paddingVertical: 20,
+            },
+            week: {
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              borderBottomWidth: 1,
+              borderBottomColor: 'lightgray',
+              paddingBottom: 4,
+              marginBottom: 15,
+            },
+            dayTextAtIndex0: { color: '#FF5656' }, // 일요일 빨간색
+            dayTextAtIndex6: { color: '#4766FF' }, // 토요일 파란색
+            dayTextAtIndex1: { color: '#000000' }, // 월요일 검정색
+            dayTextAtIndex2: { color: '#000000' }, // 화요일 검정색
+            dayTextAtIndex3: { color: '#000000' }, // 수요일 검정색
+            dayTextAtIndex4: { color: '#000000' }, // 목요일 검정색
+            dayTextAtIndex5: { color: '#000000' }, // 금요일 검정색
+          },
+          // 주 단위 밑줄(연결된 한 줄)
+          'stylesheet.calendar.main': {
+            week: {
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              borderBottomWidth: 1,
+              borderBottomColor: 'lightgray',
+              paddingBottom: 8,
+            },
+          },
         }}
+
         style={styles.calendar}
       />
 
@@ -158,36 +207,31 @@ export default function CalendarScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff'
+  container:    { flex: 1, backgroundColor: '#fff' },
+  calendar:     { borderRadius: 8, margin: 30 },
+
+  // Header 스타일 (변경 없이 그대로 둠)
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingHorizontal: 0,
+    paddingVertical: 20,
   },
-  calendar: {
-    borderRadius: 8,
-    margin: 30
-  },
-  headerRow: {
+  headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingHorizontal: 16,
-    paddingVertical: 20
-    
-  },
-  headerGroup: {
-    flexDirection: 'row',
-    alignItems: 'center', 
   },
   headerText: {
     fontSize: 30,
     fontWeight: '600',
     color: '#333',
     fontFamily: 'Pretendard-Bold',
-    marginRight: 16
+    marginRight: 16,
   },
   arrowGroup: {
     flexDirection: 'row',
-     alignItems: 'center'
+    alignItems: 'center',
   },
   arrowBtn: {
     borderWidth: 1,
@@ -195,40 +239,54 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    marginLeft: 8
+    marginLeft: 8,
   },
   arrow: {
     fontSize: 16,
-    color: '#333'
+    color: '#333',
   },
-  CustomDay: {
-    width: 36,
-    height: 36,
-    paddingVertical: 30,
+
+  // 날짜 셀 컨테이너 (변경 없이 그대로 둠)
+  dayContainer: {
+    width: 50,
+    height: 70,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'flex-start',
+    paddingTop: 4,
+    paddingBottom: 20,
+    marginBottom: 8,
   },
   dayText: {
-    fontSize: 16,
-    color: '#242424'
+    fontSize: 18,
+    color: '#898989',
   },
-  disabledDay: {
-    color: '#ccc'
+  disabledText: {
+    color: '#ccc',
   },
   holidayText: {
     color: 'red',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
-  todayContainer: {
+  todayBg: {
     backgroundColor: '#00adf5',
-    borderRadius: 18
+    borderRadius: 25,
   },
-  selectedContainer: {
+  selectedBg: {
     backgroundColor: '#00adf5',
-    borderRadius: 18
+    borderRadius: 25,
   },
   selectedText: {
     color: '#fff',
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
+
+  // memo tag 스타일
+  memoText: {
+    fontSize: 10,
+    color: '#444',
+    marginTop: 4,
+    backgroundColor: '#e0f7fa',
+    paddingHorizontal: 4,
+    borderRadius: 4,
+  },
 })
