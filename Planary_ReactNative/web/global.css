@@ -1,0 +1,10 @@
+html,
+body,
+#root,
+#root > div {
+  height: 100%;      /* 문서 = 뷰포트 */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overscroll-behavior-y: none; /* 주소창 스크롤에 따라 늘어나는 것 방지용 */
+}

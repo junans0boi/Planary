@@ -1,26 +1,26 @@
 // src/screens/CalendarScreen.js
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import EventSheetOrModal from '../components/EventSheetOrModal'
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import { Calendar as RNCalendar, LocaleConfig } from 'react-native-calendars'
 import axios from 'axios'
-import { MyModal } from '../components/MyModal'
 
 // 1. 로케일 설정
 LocaleConfig.locales.ko = {
-  monthNames:      ['01월','02월','03월','04월','05월','06월','07월','08월','09월','10월','11월','12월'],
-  monthNamesShort: ['01','02','03','04','05','06','07','08','09','10','11','12'],
-  dayNames:        ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'],
-  dayNamesShort:   ['일','월','화','수','목','금','토'],
-  today:           '오늘'
+  monthNames: ['01월', '02월', '03월', '04월', '05월', '06월', '07월', '08월', '09월', '10월', '11월', '12월'],
+  monthNamesShort: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
+  dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+  dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+  today: '오늘'
 }
 
 LocaleConfig.defaultLocale = 'ko'
 
 export default function CalendarScreen() {
   const today = new Date().toISOString().split('T')[0]
-  const [current, setCurrent]       = useState(today)
+  const [current, setCurrent] = useState(today)
   const [selectedDate, setSelected] = useState(null)
-  const [modalVisible, setModal]    = useState(false)
+  const [sheetVisible, setSheet] = useState(false)
   const [specificDates, setSpecificDates] = useState([])
 
   // 예시 memoMap
@@ -31,7 +31,7 @@ export default function CalendarScreen() {
 
   const handleDayPress = day => {
     setSelected(day.dateString)
-    setModal(true)
+    setSheet(true)
   }
 
   const goPrev = () => {
@@ -47,12 +47,12 @@ export default function CalendarScreen() {
 
   const formatDate = yyyymmdd => {
     const s = String(yyyymmdd)
-    return `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`
+    return `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`
   }
 
   const buildMarked = () => {
     const marked = {
-      [today]:        { marked: true, dotColor: 'skyblue' },
+      [today]: { marked: true, dotColor: 'skyblue' },
       [selectedDate]: { selected: true, selectedColor: 'blue' },
     }
     specificDates.forEach(d => {
@@ -60,33 +60,37 @@ export default function CalendarScreen() {
     })
     return marked
   }
-// 공휴일 API 호출 함수
-const GetDate = async () => {
-  try {
-    const res = await axios.get(
-      'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo',
-      {
-        params: {
-          serviceKey: '%2FeCLSPpRZ0cIJ9UF4HHDfjVScQcnjw8gHOtd7EhAq2J0Jbk%2F9TW9IknbAOaC3ZvMn20Qzf4PWRiz9%2F%2BEkYt%2B1g%3D%3D',  // ← 인코딩된 키 전체를 붙여넣으세요
-          solYear:    new Date().getFullYear(),
-          pageNo:     1,
-          numOfRows:  100,
-          _type:      'json'
+  // 공휴일 API 호출 함수
+  const GetDate = async () => {
+    try {
+      const res = await axios.get(
+        'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo',
+        {
+          params: {
+            serviceKey: '%2FeCLSPpRZ0cIJ9UF4HHDfjVScQcnjw8gHOtd7EhAq2J0Jbk%2F9TW9IknbAOaC3ZvMn20Qzf4PWRiz9%2F%2BEkYt%2B1g%3D%3D',  // ← 인코딩된 키 전체를 붙여넣으세요
+            solYear: new Date().getFullYear(),
+            pageNo: 1,
+            numOfRows: 100,
+            _type: 'json'
+          }
         }
-      }
-    )
-    const items = res.data.response.body.items.item || []
-    const dates = items.map(item => formatDate(item.locdate))
-    setSpecificDates(dates)
-  } catch (err) {
-    console.error('공휴일 API 오류:', err.response?.data || err)
+      )
+      const items = res.data.response.body.items.item || []
+      const dates = items.map(item => formatDate(item.locdate))
+      setSpecificDates(dates)
+    } catch (err) {
+      console.error('공휴일 API 오류:', err.response?.data || err)
+    }
   }
-}
 
-// 컴포넌트 마운트 시 한 번만 공휴일 불러오기
-useEffect(() => {
-  GetDate()
-}, [])
+  const handleSave = (newEvent) => {
+    /* TODO: 서버 POST → 성공 시 상태 갱신 */
+    Alert.alert('저장됨', JSON.stringify(newEvent, null, 2));
+  };
+  // 컴포넌트 마운트 시 한 번만 공휴일 불러오기
+  useEffect(() => {
+    GetDate()
+  }, [])
 
 
   return (
@@ -98,7 +102,7 @@ useEffect(() => {
         hideArrows={true}
 
         renderHeader={date => {
-          const year  = date.getFullYear()
+          const year = date.getFullYear()
           const month = String(date.getMonth() + 1).padStart(2, '0')
           return (
             <View style={styles.headerContainer}>
@@ -120,21 +124,21 @@ useEffect(() => {
         }}
 
         dayComponent={({ date, state }) => {
-          const dStr       = date.dateString
-          const isToday    = dStr === today
+          const dStr = date.dateString
+          const isToday = dStr === today
           const isSelected = dStr === selectedDate
-          const isHoliday  = specificDates.includes(dStr)
-          const memo       = memoMap[dStr]
-          
+          const isHoliday = specificDates.includes(dStr)
+          const memo = memoMap[dStr]
+
           const containerStyle = [
             styles.dayContainer,
-            isToday    && styles.todayBg,
+            isToday && styles.todayBg,
             isSelected && styles.selectedBg
           ]
           const textStyle = [
             styles.dayText,
             state === 'disabled' && styles.disabledText,
-            isHoliday             && styles.holidayText,
+            isHoliday && styles.holidayText,
             (isToday || isSelected) && styles.selectedText
           ]
 
@@ -197,18 +201,19 @@ useEffect(() => {
         style={styles.calendar}
       />
 
-      <MyModal
-        visible={modalVisible}
-        onClose={() => setModal(false)}
-        data={selectedDate}
+      <EventSheetOrModal
+        visible={sheetVisible}
+        date={selectedDate}
+        onSave={handleSave}
+        onClose={() => setSheet(false)}
       />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container:    { flex: 1, backgroundColor: '#fff' },
-  calendar:     { borderRadius: 8, margin: 30 },
+  container: { flex: 1, backgroundColor: '#fff' },
+  calendar: { borderRadius: 8, margin: 30 },
 
   // Header 스타일 (변경 없이 그대로 둠)
   headerContainer: {

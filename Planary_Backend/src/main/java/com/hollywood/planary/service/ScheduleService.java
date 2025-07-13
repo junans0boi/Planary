@@ -1,0 +1,48 @@
+package com.hollywood.planary.service;
+
+import com.hollywood.planary.entity.Schedule;
+import com.hollywood.planary.repository.ScheduleRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+public class ScheduleService {
+    private final ScheduleRepository scheduleRepo;
+
+    public ScheduleService(ScheduleRepository repo) {
+        this.scheduleRepo = repo;
+    }
+
+    public List<Schedule> findSchedulesByUser(Long userId) {
+        return scheduleRepo.findByUserUserId(userId);
+    }
+
+    public Schedule findSchedule(Long id) {
+        return scheduleRepo.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
+    }
+
+    @Transactional
+    public Schedule createSchedule(Schedule schedule) {
+        return scheduleRepo.save(schedule);
+    }
+
+    @Transactional
+    public Schedule updateSchedule(Long id, Schedule dto) {
+        Schedule ev = scheduleRepo.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
+        ev.setTitle(dto.getTitle());
+        ev.setStartDt(dto.getStartDt());
+        ev.setEndDt(dto.getEndDt());
+        ev.setDone(dto.isDone());           // <— dto.isDone() 로 변경
+        // ... 나머지 필드 업데이트
+        return scheduleRepo.save(ev);
+    }
+
+    @Transactional
+    public void deleteSchedule(Long id) {
+        scheduleRepo.deleteById(id);
+    }
+}
