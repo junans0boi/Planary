@@ -67,7 +67,7 @@ export default function CalendarScreen() {
         'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo',
         {
           params: {
-            serviceKey: '%2FeCLSPpRZ0cIJ9UF4HHDfjVScQcnjw8gHOtd7EhAq2J0Jbk%2F9TW9IknbAOaC3ZvMn20Qzf4PWRiz9%2F%2BEkYt%2B1g%3D%3D',  // ← 인코딩된 키 전체를 붙여넣으세요
+            serviceKey: '',  // ← 인코딩된 키 전체를 붙여넣으세요
             solYear: new Date().getFullYear(),
             pageNo: 1,
             numOfRows: 100,
@@ -90,8 +90,7 @@ export default function CalendarScreen() {
   // 컴포넌트 마운트 시 한 번만 공휴일 불러오기
   useEffect(() => {
     GetDate()
-  }, [])
-
+  }, []) 
 
   return (
     <View style={styles.container}>
@@ -124,37 +123,55 @@ export default function CalendarScreen() {
         }}
 
         dayComponent={({ date, state }) => {
-          const dStr = date.dateString
-          const isToday = dStr === today
-          const isSelected = dStr === selectedDate
-          const isHoliday = specificDates.includes(dStr)
-          const memo = memoMap[dStr]
+          const dStr = date.dateString;
+          const weekday = new Date(dStr).getDay();
+          const isToday = dStr === today;
+          const isSelected = dStr === selectedDate;
+          const isHoliday = specificDates.includes(dStr);
+          const memo = memoMap[dStr];
+          const isDisabled = state === 'disabled';
+
 
           const containerStyle = [
-            styles.dayContainer,
-            isToday && styles.todayBg,
-            isSelected && styles.selectedBg
+            styles.dayContainer
           ]
+
+          const numberWrapperStyle = [
+            styles.dayNumberWrapper,
+            isToday    && styles.todayCircle,
+            isSelected && styles.selectedCircle
+          ]
+
           const textStyle = [
             styles.dayText,
-            state === 'disabled' && styles.disabledText,
-            isHoliday && styles.holidayText,
-            (isToday || isSelected) && styles.selectedText
-          ]
+            isDisabled
+              ? styles.disabledText
+              : [
+                  // 요일에 따른 컬러링 (세로 컬러)
+                  weekday === 0 && { color: '#FF5656' },
+                  // 공휴일, 선택/오늘 스타일
+                  isHoliday             && styles.holidayText,
+                  (isToday || isSelected) && styles.selectedCircle
+                ]
+          ];
 
           return (
             <TouchableOpacity
-              style={containerStyle}
-              onPress={() => handleDayPress({ dateString: dStr })}
+              style={styles.dayContainer}
+              onPress={() => !isDisabled && handleDayPress({ dateString: dStr })}
+              disabled={isDisabled}
             >
-              <Text style={textStyle}>{date.day}</Text>
+              <View style={numberWrapperStyle}>
+                <Text style={textStyle}>{date.day}</Text>
+              </View>
+              
               {memo && (
                 <Text style={styles.memoText} numberOfLines={1}>
                   {memo}
                 </Text>
               )}
             </TouchableOpacity>
-          )
+          );
         }}
 
         markedDates={buildMarked()}
@@ -180,11 +197,11 @@ export default function CalendarScreen() {
             },
             dayTextAtIndex0: { color: '#FF5656' }, // 일요일 빨간색
             dayTextAtIndex6: { color: '#4766FF' }, // 토요일 파란색
-            dayTextAtIndex1: { color: '#000000' }, // 월요일 검정색
-            dayTextAtIndex2: { color: '#000000' }, // 화요일 검정색
-            dayTextAtIndex3: { color: '#000000' }, // 수요일 검정색
-            dayTextAtIndex4: { color: '#000000' }, // 목요일 검정색
-            dayTextAtIndex5: { color: '#000000' }, // 금요일 검정색
+            dayTextAtIndex1: { color: '#898989' }, // 월요일 검정색
+            dayTextAtIndex2: { color: '#898989' }, // 화요일 검정색
+            dayTextAtIndex3: { color: '#898989' }, // 수요일 검정색
+            dayTextAtIndex4: { color: '#898989' }, // 목요일 검정색
+            dayTextAtIndex5: { color: '#898989' }, // 금요일 검정색
           },
           // 주 단위 밑줄(연결된 한 줄)
           'stylesheet.calendar.main': {
@@ -221,7 +238,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingHorizontal: 0,
-    paddingVertical: 20,
+    paddingVertical: 7,
   },
   headerLeft: {
     flexDirection: 'row',
@@ -240,7 +257,7 @@ const styles = StyleSheet.create({
   },
   arrowBtn: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#59B4F7',
     borderRadius: 4,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -248,21 +265,22 @@ const styles = StyleSheet.create({
   },
   arrow: {
     fontSize: 16,
-    color: '#333',
+    color: '#59B4F7',
   },
 
   // 날짜 셀 컨테이너 (변경 없이 그대로 둠)
   dayContainer: {
-    width: 50,
-    height: 70,
+    Width: 50,
+    minHeight: 80,
     alignItems: 'center',
     justifyContent: 'flex-start',
     paddingTop: 4,
-    paddingBottom: 20,
+    paddingBottom: 4,
     marginBottom: 8,
+    
   },
   dayText: {
-    fontSize: 18,
+    fontSize: 12,
     color: '#898989',
   },
   disabledText: {
@@ -272,14 +290,23 @@ const styles = StyleSheet.create({
     color: 'red',
     fontWeight: 'bold',
   },
-  todayBg: {
-    backgroundColor: '#00adf5',
-    borderRadius: 25,
+  dayNumberWrapper: {
+    minWidth: 36,
+    minHeight: 36,
+    padding: 8,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'visible',  // 기본 배경 없음
   },
-  selectedBg: {
+  todayCircle: {
     backgroundColor: '#00adf5',
-    borderRadius: 25,
   },
+  selectedCircle: {
+    backgroundColor: '#00adf5',
+  },
+
+
   selectedText: {
     color: '#fff',
     fontWeight: 'bold',
@@ -293,5 +320,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0f7fa',
     paddingHorizontal: 4,
     borderRadius: 4,
+    width: 80,
+    textAlign: 'center',
   },
 })
