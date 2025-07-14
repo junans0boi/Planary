@@ -1,8 +1,9 @@
-// src/screens/CalendarScreen.js
+
 import React, { useEffect, useState } from 'react'
-import EventSheetOrModal from '../components/EventSheetOrModal'
+import ListModal from '../components/ListModal'
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import { Calendar as RNCalendar, LocaleConfig } from 'react-native-calendars'
+
 import axios from 'axios'
 
 // 1. 로케일 설정
@@ -90,7 +91,7 @@ export default function CalendarScreen() {
   // 컴포넌트 마운트 시 한 번만 공휴일 불러오기
   useEffect(() => {
     GetDate()
-  }, []) 
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -138,7 +139,7 @@ export default function CalendarScreen() {
 
           const numberWrapperStyle = [
             styles.dayNumberWrapper,
-            isToday    && styles.todayCircle,
+            isToday && styles.todayCircle,
             isSelected && styles.selectedCircle
           ]
 
@@ -147,12 +148,12 @@ export default function CalendarScreen() {
             isDisabled
               ? styles.disabledText
               : [
-                  // 요일에 따른 컬러링 (세로 컬러)
-                  weekday === 0 && { color: '#FF5656' },
-                  // 공휴일, 선택/오늘 스타일
-                  isHoliday             && styles.holidayText,
-                  (isToday || isSelected) && styles.selectedCircle
-                ]
+                // 요일에 따른 컬러링 (세로 컬러)
+                weekday === 0 && { color: '#FF5656' },
+                // 공휴일, 선택/오늘 스타일
+                isHoliday && styles.holidayText,
+                (isToday || isSelected) && styles.selectedCircle
+              ]
           ];
 
           return (
@@ -164,7 +165,7 @@ export default function CalendarScreen() {
               <View style={numberWrapperStyle}>
                 <Text style={textStyle}>{date.day}</Text>
               </View>
-              
+
               {memo && (
                 <Text style={styles.memoText} numberOfLines={1}>
                   {memo}
@@ -218,11 +219,11 @@ export default function CalendarScreen() {
         style={styles.calendar}
       />
 
-      <EventSheetOrModal
+      <ListModal
         visible={sheetVisible}
         date={selectedDate}
-        onSave={handleSave}
         onClose={() => setSheet(false)}
+        onRefresh={() => { /* 달력 다시 그리기 필요 시 */ }}
       />
     </View>
   )
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     paddingBottom: 4,
     marginBottom: 8,
-    
+
   },
   dayText: {
     fontSize: 12,

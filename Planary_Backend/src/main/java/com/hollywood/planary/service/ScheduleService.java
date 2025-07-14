@@ -21,7 +21,7 @@ public class ScheduleService {
 
     public Schedule findSchedule(Long id) {
         return scheduleRepo.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
     }
 
     @Transactional
@@ -32,11 +32,11 @@ public class ScheduleService {
     @Transactional
     public Schedule updateSchedule(Long id, Schedule dto) {
         Schedule ev = scheduleRepo.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
         ev.setTitle(dto.getTitle());
         ev.setStartDt(dto.getStartDt());
         ev.setEndDt(dto.getEndDt());
-        ev.setDone(dto.isDone());           // <— dto.isDone() 로 변경
+        ev.setDone(dto.isDone()); // <— dto.isDone() 로 변경
         // ... 나머지 필드 업데이트
         return scheduleRepo.save(ev);
     }
@@ -44,5 +44,22 @@ public class ScheduleService {
     @Transactional
     public void deleteSchedule(Long id) {
         scheduleRepo.deleteById(id);
+    }
+
+    // → 컨트롤러가 호출하는 이름으로 위임 메서드 추가
+    public List<Schedule> findByUser(Long userId) {
+        return findSchedulesByUser(userId);
+    }
+
+    public Schedule create(Schedule ev) {
+        return createSchedule(ev);
+    }
+
+    public Schedule update(Long id, Schedule dto) {
+        return updateSchedule(id, dto);
+    }
+
+    public void delete(Long id) {
+        deleteSchedule(id);
     }
 }

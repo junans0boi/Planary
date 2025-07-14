@@ -1,8 +1,10 @@
 package com.hollywood.planary.controller;
 
 import com.hollywood.planary.entity.Schedule;
+import com.hollywood.planary.entity.User;
 import com.hollywood.planary.service.ScheduleService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,45 +12,35 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/events")
 public class ScheduleController {
-    private final ScheduleService eventService;
+    private final ScheduleService svc;
 
-    public ScheduleController(ScheduleService eventService) {
-        this.eventService = eventService;
+    public ScheduleController(ScheduleService svc) {
+        this.svc = svc;
     }
 
-    @GetMapping("/user/{userId}")
-    public List<Schedule> getSchedulesByUser(@PathVariable Long userId) {
-        return eventService.findSchedulesByUser(userId);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Schedule> getSchedule(@PathVariable Long id) {
-        try {
-            Schedule ev = eventService.findSchedule(id);
-            return ResponseEntity.ok(ev);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping
+    public List<Schedule> list(@AuthenticationPrincipal User me) {
+        return svc.findByUser(me.getUserId());
     }
 
     @PostMapping
-    public Schedule createSchedule(@RequestBody Schedule event) {
-        return eventService.createSchedule(event);
+    public Schedule create(@AuthenticationPrincipal User me,
+                           @RequestBody Schedule ev) {
+        ev.setUser(me);
+        return svc.create(ev);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Schedule> updateSchedule(@PathVariable Long id, @RequestBody Schedule event) {
-        try {
-            Schedule updated = eventService.updateSchedule(id, event);
-            return ResponseEntity.ok(updated);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Schedule> update(@AuthenticationPrincipal User me,
+                                           @PathVariable Long id,
+                                           @RequestBody Schedule dto) {
+        dto.setUser(me);
+        return ResponseEntity.ok(svc.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
-        eventService.deleteSchedule(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        svc.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
