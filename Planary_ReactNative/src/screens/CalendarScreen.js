@@ -1,18 +1,60 @@
 // src/screens/CalendarScreen.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Calendar from '../components/Calendar';
+import ListModal from '../components/ListModal';
+import { getHolidays } from '../api/holidayApi';
 
 export default function CalendarScreen() {
+  const today = new Date().toISOString().split('T')[0];
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [sheetVisible, setSheetVisible] = useState(false);
+  const [holidays, setHolidays] = useState([]);
+
+  // 공휴일 불러오기
+  useEffect(() => {
+    (async () => {
+      try {
+        const dates = await getHolidays();
+        setHolidays(dates);
+      } catch (e) {
+        console.error('공휴일 불러오기 실패:', e);
+      }
+    })();
+  }, []);
+
+  const handleDayPress = ({ dateString }) => {
+    setSelectedDate(dateString);
+    setSheetVisible(true);
+  };
+
+  const handleRefresh = () => {
+    // 달력 새로고침 로직 (필요 시)
+  };
+
   return (
     <View style={styles.container}>
-      {/* 공통 헤더 (웹에서는 사이드바가 대신 헤더 역할) */}
-      
+      {/* 공통 헤더 */}
+      <View style={styles.header}>
+        <Text style={styles.title}>캘린더</Text>
+      </View>
 
       {/* 본문 */}
       <View style={styles.body}>
-        <Calendar />
+        <Calendar
+          onDayPress={handleDayPress}
+          holidays={holidays}
+          today={today}
+        />
       </View>
+
+      {/* 일정 상세/등록 모달 */}
+      <ListModal
+        visible={sheetVisible}
+        date={selectedDate}
+        onClose={() => setSheetVisible(false)}
+        onRefresh={handleRefresh}
+      />
     </View>
   );
 }

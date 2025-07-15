@@ -1,19 +1,53 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View } from 'react-native';
+import Calendar from '../components/Calendar';
+import AddDiaryModal from '../components/AddDiaryModal';
+import { getHolidays } from '../api/holidayApi';
 
 export default function DiaryScreen() {
+  const today = new Date().toISOString().split('T')[0];
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [holidays, setHolidays] = useState([]);
+  const [diaries, setDiaries] = useState({});
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const dates = await getHolidays();
+        setHolidays(dates);
+      } catch(e) {
+        console.error('공휴일 불러오기 실패:', e);
+      }
+    })();
+  }, []);
+
+  const handleDayPress = ({ dateString }) => {
+    setSelectedDate(dateString);
+    setModalVisible(true);
+  };
+
+  const handleSaveDiary = diary => {
+    setDiaries(prev => ({ ...prev, [diary.date]: diary }));
+    setModalVisible(false);
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.body}>
-        <Text>여기에 투두 리스트 컴포넌트가 들어갑니다.</Text>
-      </View>
+    <View style={{ flex:1, backgroundColor:'#fff' }}>
+      <Calendar
+        onDayPress={handleDayPress}
+        holidays={holidays}
+        diaries={diaries}
+        today={today}
+      />
+
+      <AddDiaryModal
+        visible={modalVisible}
+        selectedDate={selectedDate}
+        initialDiary={diaries[selectedDate]}
+        onClose={() => setModalVisible(false)}
+        onSave={handleSaveDiary}
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  header:    { height: 56, paddingHorizontal: 16, justifyContent: 'center', borderBottomWidth: 1, borderColor: '#eee' },
-  title:     { fontSize: 20, fontWeight: 'bold' },
-  body:      { flex: 1, padding: 16 },
-});
