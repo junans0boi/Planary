@@ -1,5 +1,7 @@
 // src/components/ScheduleItem.js
 import React from 'react';
+import axios from '../axiosConfig';
+
 import { TouchableOpacity, Text } from 'react-native';
 
 export default function ScheduleItem({ item, onClose, onRefresh }) {

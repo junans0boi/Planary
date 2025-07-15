@@ -4,7 +4,7 @@ import com.hollywood.planary.entity.Todo;
 import com.hollywood.planary.entity.User;
 import com.hollywood.planary.service.TodoService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -22,27 +22,25 @@ public class TodoController {
     }
 
     @GetMapping
-    public List<Todo> list(@AuthenticationPrincipal User me,
-                           @RequestParam(required = false) String date) {
+    public List<Todo> list(@RequestParam Long userId,
+            @RequestParam(required = false) String date) {
         if (date == null) {
-            return svc.findByUser(me.getUserId());
+            return svc.findByUser(userId);
         }
         LocalDate d = LocalDate.parse(date);
         LocalDateTime start = d.atStartOfDay();
-        LocalDateTime end   = d.atTime(LocalTime.MAX);
-        return svc.findByUserAndDay(me.getUserId(), start, end);
+        LocalDateTime end = d.atTime(LocalTime.MAX);
+        return svc.findByUserAndDay(userId, start, end);
     }
 
     @PostMapping
-    public Todo create(@AuthenticationPrincipal User me,
-                       @RequestBody Todo td) {
-        td.setUser(me);
+    public Todo create(@RequestBody Todo td) {
         return svc.create(td);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable Long id,
-                                       @RequestBody Todo dto) {
+    public ResponseEntity<Todo> update(@PathVariable Long id,
+            @RequestBody Todo dto) {
         return ResponseEntity.ok(svc.update(id, dto));
     }
 

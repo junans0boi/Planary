@@ -5,6 +5,7 @@ import com.hollywood.planary.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -49,6 +50,11 @@ public class ScheduleService {
     // → 컨트롤러가 호출하는 이름으로 위임 메서드 추가
     public List<Schedule> findByUser(Long userId) {
         return findSchedulesByUser(userId);
+    }
+
+    public List<Schedule> findByUserAndDay(Long userId, LocalDateTime from, LocalDateTime to) {
+        return scheduleRepo.findByUserUserIdAndStartDtBetween(userId, from, to);
+
     }
 
     public Schedule create(Schedule ev) {

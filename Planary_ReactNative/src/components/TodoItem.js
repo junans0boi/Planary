@@ -1,7 +1,7 @@
 // src/components/TodoItem.js
 import React, { useState } from 'react';
 import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
-import axios from 'axios';
+import axios from '../axiosConfig';
 
 export default function TodoItem({ item, onClose, onRefresh }) {
   // 로컬 완료 상태 관리
@@ -9,7 +9,7 @@ export default function TodoItem({ item, onClose, onRefresh }) {
 
   // 시간 문자열 포맷팅
   const start = item.startDt ? item.startDt.slice(11, 16) : '';
-  const end   = item.endDt   ? item.endDt.slice(11, 16)   : '';
+  const end = item.endDt ? item.endDt.slice(11, 16) : '';
   const range = start && end ? `${start} ~ ${end}` : '';
 
   // 완료 상태 토글 핸들러
@@ -18,7 +18,14 @@ export default function TodoItem({ item, onClose, onRefresh }) {
     setIsDone(newValue);
     try {
       // 서버에 완료 상태 업데이트
-      await axios.patch(`/api/todos/${item.todoId}`, { isDone: newValue });
+      await axios.put(`/todos/${item.todoId}`, {
+        // 반드시 전체 DTO를 넘겨야 합니다.
+        title: item.title,
+        isRecurring: item.isRecurring,
+        startDt: item.startDt,
+        endDt: item.endDt,
+        isDone: newValue
+      });
       onRefresh();
     } catch (err) {
       console.error(err);

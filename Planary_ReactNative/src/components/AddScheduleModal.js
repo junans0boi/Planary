@@ -2,19 +2,21 @@
 import React, { useState, useEffect } from 'react';
 import {
   Modal, View, Text, TextInput, Switch,
-  TouchableOpacity, Button, ScrollView, StyleSheet
+  TouchableOpacity, Button, ScrollView, StyleSheet, Platform
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import axios from 'axios';
+import ReactDatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import axios from '../axiosConfig';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+const DAY_CODES = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
 
 export default function AddScheduleModal({ visible, date, userId, onClose, onSave }) {
   const [title, setTitle] = useState('');
   const [allDay, setAllDay] = useState(false);
   const [startDt, setStartDt] = useState(new Date(date));
   const [endDt, setEndDt] = useState(new Date(date));
-  const [showPicker, setShowPicker] = useState(null); // 'start'|'end'
   const [memo, setMemo] = useState('');
   const [location, setLocation] = useState('');
   const [recurrenceType, setRecurrenceType] = useState('none'); // 'none','weekly','monthly'
@@ -27,27 +29,16 @@ export default function AddScheduleModal({ visible, date, userId, onClose, onSav
     setEndDt(d);
   }, [date]);
 
-  const toggleAllDay = flag => {
-    setAllDay(flag);
-    const sd = new Date(startDt);
-    const ed = new Date(endDt);
-    if (flag) {
-      sd.setHours(0,0,0);
-      ed.setHours(23,59,0);
-    }
-    setStartDt(sd);
-    setEndDt(ed);
-  };
-
   const toggleWeekday = idx => {
     setWeeklyDays(days =>
-      days.includes(idx) ? days.filter(d => d!==idx) : [...days, idx]
+      days.includes(idx) ? days.filter(d => d !== idx) : [...days, idx]
     );
   };
 
   const handleSave = async () => {
+    if (!userId) return alert('userId 가 없습니다!');
     const recurRule = recurrenceType === 'weekly'
-      ? `RRULE:FREQ=WEEKLY;BYDAY=${weeklyDays.map(i=>['SU','MO','TU','WE','TH','FR','SA'][i]).join(',')}`
+      ? `RRULE:FREQ=WEEKLY;BYDAY=${weeklyDays.map(i => DAY_CODES[i]).join(',')}`
       : recurrenceType === 'monthly'
         ? `RRULE:FREQ=MONTHLY;BYMONTHDAY=${monthlyDay}`
         : null;
@@ -61,18 +52,40 @@ export default function AddScheduleModal({ visible, date, userId, onClose, onSav
       endDt: endDt.toISOString(),
       isRecurring: recurrenceType !== 'none',
       recurRule,
-      externalSource: null,
-      externalScheduleId: null,
-      memo,
-      location
+      memo,      // ← 엔티티에 추가됨
+      location   // ← 엔티티에 추가됨
     };
 
     try {
-      const res = await axios.post('/api/events', payload);
-      onSave(res.data);
+      const res = await axios.post('/events', payload);
+      onSave(res.data);  // ListModal 쪽에서 fetchData 호출
       onClose();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  // 네이티브: 버튼 → DateTimePicker 모달, 웹: inline ReactDatePicker
+  const DatePicker = ({ mode, value, onChange }) => {
+    if (Platform.OS === 'web') {
+      return (
+        <ReactDatePicker
+          selected={value}
+          onChange={onChange}
+          showTimeSelect={!allDay}
+          dateFormat={allDay ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm'}
+          className="react-datepicker__input-text"
+        />
+      );
+    } else {
+      return (
+        <DateTimePicker
+          value={value}
+          mode={allDay || mode === 'date' ? 'date' : 'datetime'}
+          display="default"
+          onChange={(_, d) => d && onChange(d)}
+        />
+      );
     }
   };
 
@@ -88,67 +101,48 @@ export default function AddScheduleModal({ visible, date, userId, onClose, onSav
             <View style={s.row}>
               <View style={s.rowItem}>
                 <Text>종일</Text>
-                <Switch value={allDay} onValueChange={toggleAllDay} />
+                <Switch value={allDay} onValueChange={setAllDay} />
               </View>
               <View style={s.rowItem}>
                 <Text>반복</Text>
-                <Switch
-                  value={recurrenceType!=='none'}
-                  onValueChange={val => setRecurrenceType(val ? 'weekly' : 'none')}
-                />
+                <Switch value={recurrenceType !== 'none'} onValueChange={val => setRecurrenceType(val ? 'weekly' : 'none')} />
               </View>
             </View>
 
-            <View style={s.row}>
-              <TouchableOpacity onPress={()=>setShowPicker('start')} style={s.dateBtn}>
-                <Text>{allDay ? startDt.toISOString().slice(0,10) : startDt.toLocaleString()}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={()=>setShowPicker('end')} style={s.dateBtn}>
-                <Text>{allDay ? endDt.toISOString().slice(0,10) : endDt.toLocaleString()}</Text>
-              </TouchableOpacity>
-            </View>
-            {showPicker && (
-              <DateTimePicker
-                value={showPicker==='start'?startDt:endDt}
-                mode={allDay?'date':'datetime'}
-                display="default"
-                onChange={(_, d) => {
-                  setShowPicker(null);
-                  if (!d) return;
-                  if (showPicker==='start') setStartDt(d);
-                  else setEndDt(d);
-                }}
-              />
-            )}
+            <Text style={s.label}>시작</Text>
+            <DatePicker mode="datetime" value={startDt} onChange={d => setStartDt(d)} />
 
-            {recurrenceType==='weekly' && (
+            <Text style={s.label}>종료</Text>
+            <DatePicker mode="datetime" value={endDt} onChange={d => setEndDt(d)} />
+
+            {recurrenceType === 'weekly' && (
               <View style={s.weekdays}>
-                {WEEKDAYS.map((d,i)=>(
+                {WEEKDAYS.map((d, i) => (
                   <TouchableOpacity
                     key={i}
-                    onPress={()=>toggleWeekday(i)}
-                    style={[s.dayBadge, weeklyDays.includes(i)&&s.dayBadgeActive]}
+                    onPress={() => toggleWeekday(i)}
+                    style={[s.dayBadge, weeklyDays.includes(i) && s.dayBadgeActive]}
                   >
-                    <Text style={weeklyDays.includes(i)?s.dayTextActive:null}>{d}</Text>
+                    <Text style={weeklyDays.includes(i) ? s.dayTextActive : null}>{d}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
             )}
-            {recurrenceType==='monthly' && (
-              <View style={{marginVertical:8}}>
-                <Text>매월 날짜</Text>
+            {recurrenceType === 'monthly' && (
+              <>
+                <Text style={s.label}>매월 날짜</Text>
                 <TextInput
                   style={s.input}
                   keyboardType="numeric"
                   value={String(monthlyDay)}
-                  onChangeText={t=>setMonthlyDay(parseInt(t)||1)}
+                  onChangeText={t => setMonthlyDay(parseInt(t) || 1)}
                 />
-              </View>
+              </>
             )}
 
             <Text style={s.label}>메모</Text>
             <TextInput
-              style={[s.input,{height:80}]}
+              style={[s.input, { height: 80 }]}
               value={memo}
               onChangeText={setMemo}
               placeholder="메모 입력"
@@ -170,20 +164,17 @@ export default function AddScheduleModal({ visible, date, userId, onClose, onSav
 }
 
 const s = StyleSheet.create({
-  overlay:{flex:1,backgroundColor:'#00000066',justifyContent:'center',alignItems:'center'},
-  container:{width:'90%',maxHeight:'90%',backgroundColor:'#fff',borderRadius:12,overflow:'hidden'},
-  title:{fontSize:18,fontWeight:'bold',padding:16,borderBottomWidth:1,borderColor:'#eee'},
-  scroll:{paddingHorizontal:16},
-  label:{marginTop:12,fontWeight:'600'},
-  input:{borderWidth:1,borderColor:'#ccc',borderRadius:6,padding:8,marginTop:4},
-  row:{flexDirection:'row',justifyContent:'space-between',marginTop:12},
-  rowItem:{flexDirection:'row',alignItems:'center',gap:8},
-  dateBtn:{flex:1,borderWidth:1,borderColor:'#ccc',borderRadius:6,padding:8,marginHorizontal:4,alignItems:'center'},
-  weekdays:{flexDirection:'row',justifyContent:'space-around',marginTop:12},
-  dayBadge:{padding:8,borderRadius:4,borderWidth:1,borderColor:'#ccc'},
-  dayBadgeActive:{backgroundColor:'#59B4F7',borderColor:'#59B4F7'},
-  dayTextActive:{color:'#fff'},
-  btnRow:{flexDirection:'row',justifyContent:'space-between',padding:16,borderTopWidth:1,borderColor:'#eee'}
+  overlay: { flex: 1, backgroundColor: '#00000066', justifyContent: 'center', alignItems: 'center' },
+  container: { width: '90%', maxHeight: '90%', backgroundColor: '#fff', borderRadius: 12, overflow: 'hidden' },
+  title: { fontSize: 18, fontWeight: 'bold', padding: 16, borderBottomWidth: 1, borderColor: '#eee' },
+  scroll: { paddingHorizontal: 16 },
+  label: { marginTop: 12, fontWeight: '600' },
+  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginTop: 4 },
+  row: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 },
+  rowItem: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  weekdays: { flexDirection: 'row', justifyContent: 'space-around', marginTop: 12 },
+  dayBadge: { padding: 8, borderRadius: 4, borderWidth: 1, borderColor: '#ccc' },
+  dayBadgeActive: { backgroundColor: '#59B4F7', borderColor: '#59B4F7' },
+  dayTextActive: { color: '#fff' },
+  btnRow: { flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderTopWidth: 1, borderColor: '#eee' },
 });
-
-
