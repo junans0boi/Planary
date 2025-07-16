@@ -34,11 +34,6 @@ export default function CalendarScreen() {
 
   return (
     <View style={styles.container}>
-      {/* 공통 헤더 */}
-      <View style={styles.header}>
-        <Text style={styles.title}>캘린더</Text>
-      </View>
-
       {/* 본문 */}
       <View style={styles.body}>
         <Calendar

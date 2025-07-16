@@ -6,9 +6,11 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Image,
   Button,
-  StyleSheet
+  StyleSheet,
+  Platform
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -17,6 +19,18 @@ export default function AddDiaryModal({ visible, selectedDate, initialDiary, onC
   const [content, setContent] = useState('');
   const [emotion, setEmotion] = useState(1);
   const [isEditing, setIsEditing] = useState(true);
+  const isWeb = Platform.OS === 'web'; 
+
+    useEffect(() => {
+      if (!isWeb) return;
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape' && visible) {
+          onClose();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isWeb, visible, onClose]);
 
   useEffect(() => {
     if (initialDiary) {
@@ -44,7 +58,12 @@ export default function AddDiaryModal({ visible, selectedDate, initialDiary, onC
       animationType="slide"
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.overlay} />
+      </TouchableWithoutFeedback>
+
+
+      <TouchableWithoutFeedback>
         <View style={styles.modal}>
           <Text style={styles.header}>{isEditing ? '일기 쓰기' : '일기 보기'} ({selectedDate})</Text>
 
@@ -83,7 +102,7 @@ export default function AddDiaryModal({ visible, selectedDate, initialDiary, onC
             <Button title="취소" onPress={onClose} color="#888" />
           </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }

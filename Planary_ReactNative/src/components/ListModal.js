@@ -1,7 +1,7 @@
 // src/components/ListModal.js
 import axios from '../axiosConfig'
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, TouchableWithoutFeedback, StyleSheet, Platform } from 'react-native';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import ScheduleItem from './ScheduleItem';
 import TodoItem from './TodoItem';
@@ -26,6 +26,17 @@ export default function ListModal({ visible, date, userId, onClose, onRefresh })
     }
   };
   useEffect(() => {
+    if (!isWeb) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && visible) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isWeb, visible, onClose]);
+  
+  useEffect(() => {
     if (visible) fetchData();
   }, [visible, activeTab]);
 
@@ -43,9 +54,13 @@ export default function ListModal({ visible, date, userId, onClose, onRefresh })
     if (isWeb) {
       if (!visible) return null;
       return (
-        <View style={styles.overlay}>
-          <View style={styles.modalContainer}>{children}</View>
-        </View>
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View style={styles.overlay}>
+            <TouchableWithoutFeedback>
+            <View style={styles.modalContainer}>{children}</View>
+            </TouchableWithoutFeedback>
+          </View>
+          </TouchableWithoutFeedback>
       );
     } else {
       return (
@@ -54,7 +69,13 @@ export default function ListModal({ visible, date, userId, onClose, onRefresh })
           index={0}
           snapPoints={['50%', '90%']}
           onDismiss={onClose}
-        >
+          enablePanDownToClose={true}
+          backdropComponent={({ style }) => (
+            <TouchableWithoutFeedback onPress={onClose}>
+              <View style={[style, styles.nativeBackdrop]} />
+            </TouchableWithoutFeedback>
+          )}
+          >
           {children}
         </BottomSheetModal>
       );
@@ -107,6 +128,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', zIndex: 1000
   },
   modalContainer: { width: '80%', maxHeight: '80%', backgroundColor: '#fff', borderRadius: 12, overflow: 'hidden' },
+  nativeBackdrop:{
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
   header: { flexDirection: 'row', justifyContent: 'center', padding: 16, backgroundColor: '#fff' },
   tab: { fontSize: 18, color: '#888', marginHorizontal: 20 },
   activeTab: { color: '#000', fontWeight: 'bold', textDecorationLine: 'underline' },
