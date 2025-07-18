@@ -1,0 +1,124 @@
+
+아래에는 스프링부트 첫 경험 시각에서, “왜” 이 코드가 필요한지 “무엇”을 하는지, 그리고 자바·스프링 문법이 어떤 의미인지 나를 위해 풀어 설명함
+
+## 1. 엔티티(Entity) 클래스 작성
+
+### 1.1. 공통 설정
+
+```java
+@Entity
+```
+- 이 클래스가 **JPA(Entity ↔ 테이블)** 로 관리될 대상임을 표시.
+- 애플리케이션 시작 시 스프링 부트가 이 클래스를 스캔하여 데이터베이스 테이블과 매핑함.
+
+```java
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+```
+- `@Id`
+  기본 키(Primary Key) 역할을 할 필드임을 나타냄
+- `@GeneratedValue(IDENTITY)`
+   “이 기본 키 값은 자동으로 생성해 주세요.” 라는 의미
+   DB의 `AUTO_INCREMENT` 기능을 사용해 **자동 생성**하도록 위임합니다.
+
+> **왜 IDENTITY를 쓰는가?**
+> 1. **간단함**: MySQL의 `AUTO_INCREMENT` 지원만 있으면 추가 설정 없이 사용 가능
+> 2. **일관된 순번**: 레코드가 삽입된 순서대로 1,2,3… 순번 보장
+> 3. **JPA 호환성**: Hibernate가 IDENTITY 전략을 잘 지원
+
+
+| 전략 (GenerationType) | 설명                                                         | 지원 DB 예시           |
+| --------------------- | ------------------------------------------------------------ | ---------------------- |
+| **IDENTITY**          | `AUTO_INCREMENT` 같은 DB 기능을 사용하도록 위임             | MySQL, MariaDB         |
+| **SEQUENCE**          | 시퀀스 오브젝트(Oracle, PostgreSQL) 사용                      | Oracle, PostgreSQL     |
+| **TABLE**             | 별도 시퀀스 테이블로 번호 관리                               | 모든 DB (표준 구현)    |
+| **AUTO**              | JPA 구현체가 최적 전략 선택 (MySQL→IDENTITY, Oracle→SEQUENCE 등) | Hibernate, EclipseLink |
+
+---
+
+## 2. Lombok 어노테이션
+
+```java
+@Getter @Setter @NoArgsConstructor
+public class MyEntity {
+    private String name;
+    private int count;
+}
+```
+
+- `@Getter` / `@Setter`
+  각 필드에 대한 **getter** / **setter** 메서드를 자동 생성.
+- `@NoArgsConstructor`
+  파라미터가 없는 **기본 생성자**를 자동 생성.
+
+**Lombok 어노테이션의 장점**
+> - 매번 public String getXXX(...), public String setXXX(...)
+> - 반복적인 메서드 작성 생략 → 코드가 간결해지고 가독성 향상
+> - 유지보수가 쉬워집니다.
+
+## 3. Getter/Setter가 무엇이냐~
+- Java에서 getter와 setter는 클래스의 필드(멤버 변수) 값을 읽고 쓰기 위한 메서드
+### 3.1. 필요성
+1. **캡슐화(Encapsulation)**
+   - 필드를 `private`으로 숨기고, 외부에서는 메서드를 통해서만 접근
+2. **유효성 검사 & 부가 로직**
+   - `setAge(int age)`에서 `age < 0` 검사 등
+3. **프레임워크 연동**
+   - Spring, Jackson 등 리플렉션 기반 라이브러리와 호환
+
+### 3.2. 어떻게 생겼나? 예시
+```java
+public class Person {
+    // 1) 필드는 private
+    private String name;
+    private int age;
+
+    // 2) getter: 외부에서 name 값을 읽어올 때 사용
+    public String getName() {
+        return this.name;
+    }
+
+    // 3) setter: 외부에서 name 값을 변경할 때 사용
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // 다른 필드도 동일 패턴
+    public int getAge() {
+        return this.age;
+    }
+
+    public void setAge(int age) {
+        if (age < 0) {
+            throw new IllegalArgumentException("나이는 음수일 수 없습니다.");
+        }
+        this.age = age;
+    }
+}
+```
+
+- **메서드 네이밍**
+  - `get` + 필드명 대문자 시작 → Getter
+  - `set` + 필드명 대문자 시작 → Setter
+- **반환 타입**
+  - Getter: 필드 타입
+  - Setter: `void` (필드에 값 할당)
+
+---
+
+### Lombok을 쓰면?
+
+위 예시에서 getName(), setName(...), getAge(), setAge(...)를 직접 매번 작성해야 하지만,
+Lombok을 사용하면 클래스 선언부에 어노테이션만 달아주면 자동 생성
+```java
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
+public class Person {
+    private String name;
+    private int age;
+}
+```
+
